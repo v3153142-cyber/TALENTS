@@ -1,812 +1,1347 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>T.R.C Int'l · Church Manager</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', -apple-system, system-ui, sans-serif;
-      background: #0b1a2f;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
-      color: #e2e8f0;
-      position: relative;
-    }
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(circle at 20% 30%, rgba(30, 58, 95, 0.45) 0%, transparent 75%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .system-card {
-      max-width: 1440px;
-      width: 100%;
-      background: #132237;
-      border-radius: 36px;
-      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.7);
-      padding: 2rem 2rem 2.5rem;
-      border: 1px solid rgba(255,255,255,0.06);
-      position: relative;
-      z-index: 1;
-      backdrop-filter: blur(2px);
-    }
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem 1.5rem;
-      margin-bottom: 2rem;
-      border-bottom: 1px solid #1e3a5f;
-      padding-bottom: 1.25rem;
-    }
-    .brand h1 {
-      font-weight: 700;
-      font-size: 1.8rem;
-      letter-spacing: -0.3px;
-      color: #f0f4fa;
-    }
-    .brand span {
-      font-weight: 400;
-      font-size: 0.85rem;
-      color: #8aa9d1;
-    }
-    .cash-summary {
-      background: #0d1f33;
-      border-radius: 28px;
-      padding: 1.25rem 1.8rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 2rem;
-      border: 1px solid #1e3a5f;
-    }
-    .cash-total .label { font-weight: 500; color: #8aa9d1; font-size: 1rem; }
-    .cash-total .amount { font-weight: 700; font-size: 2.4rem; color: #f0f4fa; letter-spacing: -0.5px; }
-    .cash-total .currency { font-weight: 600; color: #6a9bd8; margin-right: 4px; }
-    .cash-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-    .btn {
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      transition: all 0.15s;
-      cursor: pointer;
-      border: 1px solid #1e3a5f;
-      color: #e2e8f0;
-      background: #0d1f33;
-    }
-    .btn-primary { background: #1a5a9c; border-color: #1a5a9c; color: white; box-shadow: 0 4px 12px -4px rgba(26,90,156,0.3); }
-    .btn-primary:hover { background: #1a6fc4; transform: translateY(-1px); }
-    .btn-outline { background: rgba(13,31,51,0.7); border: 1px solid #2a4a6a; }
-    .btn-outline:hover { background: #1a3a5a; border-color: #3a6a9a; }
-    .btn-success { background: #1a7a4a; border-color: #1a7a4a; color: white; }
-    .btn-success:hover { background: #2a9a5a; transform: translateY(-1px); }
-    .btn-danger-small {
-      background: #b02a37; border: none; color: white; padding: 0.2rem 0.7rem; border-radius: 30px;
-      font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
-      display: inline-flex; align-items: center; gap: 4px;
-    }
-    .btn-danger-small:hover { background: #dc3545; transform: scale(1.05); }
-    .btn-small {
-      padding: 0.5rem 1.2rem; font-size: 0.8rem; border-radius: 40px;
-      background: #1a5a9c; color: white; border: none; font-weight: 600; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.15s;
-    }
-    .btn-small:hover { background: #1a6fc4; transform: translateY(-1px); }
-    .btn-dept-add {
-      padding: 0.5rem 1.2rem; font-size: 0.8rem; border-radius: 40px;
-      background: #1a7a4a; color: white; border: none; font-weight: 600; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.15s;
-    }
-    .btn-dept-add:hover { background: #2a9a5a; transform: translateY(-1px); }
-    .btn-reset {
-      background: #7a2a3a; border-color: #7a2a3a; color: white;
-    }
-    .btn-reset:hover { background: #9a3a4a; transform: translateY(-1px); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T.R.C INT'L · Church Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        :root {
+            --primary: #1924c7;
+            --primary-light: #1f4a7a;
+            --green: #04aa41;
+            --green-light: #bbf7d0;
+            --green-dark: #15803d;
+            --white: #ffffff;
+            --bg: #f0f4fb;
+            --card-shadow: 0 8px 22px rgba(0,0,0,0.06);
+            --text-dark: #14283b;
+            --text-muted: #58718b;
+            --sidebar-width: 260px;
+            --navbar-height: 70px;
+            --transition: 0.3s ease;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --mpesa-green: #00a859;
+            --airtel-red: #e60000;
+            --sidebar-bg: rgba(7, 5, 128, 0.92);
+            --main-bg: rgba(240, 244, 251, 0.85);
+            --panel-bg: rgba(255, 255, 255, 0.92);
+            --border-light: #e9edf3;
+            --shadow: 0 8px 22px rgba(0,0,0,0.06);
+            --login-bg: #cbd5e1;
+        }
+        body.dark {
+            --bg: #0f172a;
+            --main-bg: rgba(15, 23, 42, 0.92);
+            --panel-bg: rgba(30, 41, 59, 0.92);
+            --text-dark: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-light: #334155;
+            --shadow: 0 8px 22px rgba(0,0,0,0.3);
+            --sidebar-bg: rgba(2, 6, 23, 0.95);
+            --card-shadow: 0 8px 22px rgba(0,0,0,0.4);
+            --login-bg: #1e293b;
+        }
+        body.dark .stat-card,
+        body.dark .panel,
+        body.dark .topbar,
+        body.dark .modal,
+        body.dark .department-card,
+        body.dark .branch-card,
+        body.dark .financial-item,
+        body.dark .worker-list-item,
+        body.dark .worker-detail-panel {
+            background: rgba(30, 41, 59, 0.92) !important;
+            color: #e2e8f0 !important;
+        }
+        body.dark .stat-card .label,
+        body.dark .financial-item .label,
+        body.dark .worker-detail-item .label,
+        body.dark .activity-item small,
+        body.dark .tx-detail,
+        body.dark .event-meta,
+        body.dark .mock-table th {
+            color: #94a3b8 !important;
+        }
+        body.dark .topbar-left h2,
+        body.dark .panel h3,
+        body.dark .worker-name,
+        body.dark .number,
+        body.dark .amount,
+        body.dark .stat-card .number,
+        body.dark .financial-item .amount {
+            color: #f1f5f9 !important;
+        }
+        body.dark .topbar {
+            background: rgba(30, 41, 59, 0.92) !important;
+        }
+        body.dark .topbar-right .admin-badge {
+            background: #1e293b;
+            color: #94a3b8;
+        }
+        body.dark .btn-secondary {
+            background: #334155;
+            color: #e2e8f0;
+        }
+        body.dark input, body.dark select, body.dark textarea {
+            background: #1e293b;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        body.dark .modal-overlay .modal {
+            background: rgba(30, 41, 59, 0.96) !important;
+        }
+        body.dark .sidebar {
+            background: rgba(2, 6, 23, 0.96) !important;
+        }
+        body.dark .sidebar-brand span,
+        body.dark .sidebar-nav a {
+            color: #cbd5e1 !important;
+        }
+        body.dark .sidebar-nav a:hover,
+        body.dark .sidebar-nav a.active {
+            background: rgba(255,255,255,0.08) !important;
+        }
+        body.dark .sidebar-nav a.active {
+            background: var(--green) !important;
+            color: #0f172a !important;
+        }
+        body.dark .sidebar-nav a.active i {
+            color: #0f172a !important;
+        }
+        body.dark .btn-logout {
+            border-color: #334155;
+            color: #94a3b8;
+        }
+        body.dark .btn-logout:hover {
+            background: #1e293b;
+            border-color: #475569;
+        }
+        body.dark .quick-actions button {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+        body.dark .quick-actions button:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        body.dark .badge {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+        body.dark .badge.success { background: #065f46; color: #bbf7d0; }
+        body.dark .badge.warning { background: #78350f; color: #fef3c7; }
+        body.dark .badge.danger { background: #7f1d1d; color: #fecaca; }
+        body.dark .badge.info { background: #1e3a5f; color: #bfdbfe; }
+        body.dark .payment-method.mpesa { background: #065f46; color: #6ee7b7; }
+        body.dark .payment-method.airtel { background: #7f1d1d; color: #fca5a5; }
+        body.dark .payment-method.cash { background: #1e293b; color: #a5b4fc; }
+        body.dark .payment-method.bank { background: #78350f; color: #fcd34d; }
+        body.dark .payment-method.card { background: #2e1065; color: #c4b5fd; }
+        body.dark .btn-view { background: #1e293b; color: #93c5fd; }
+        body.dark .btn-view:hover { background: #334155; }
+        body.dark .btn-edit-dept { background: #1e293b; color: #6ee7b7; }
+        body.dark .btn-edit-dept:hover { background: #334155; }
+        body.dark .btn-delete-dept { background: #1e293b; color: #fca5a5; }
+        body.dark .btn-delete-dept:hover { background: #334155; }
+        body.dark .btn-edit-branch { background: #1e293b; color: #93c5fd; }
+        body.dark .btn-edit-branch:hover { background: #334155; }
+        body.dark .btn-delete-branch { background: #1e293b; color: #fca5a5; }
+        body.dark .btn-delete-branch:hover { background: #334155; }
+        body.dark .worker-list-item .worker-actions .btn-view-sm { background: #1e293b; color: #93c5fd; }
+        body.dark .worker-list-item .worker-actions .btn-view-sm:hover { background: #334155; }
+        body.dark .worker-list-item .worker-actions .btn-edit-sm { background: #1e293b; color: #6ee7b7; }
+        body.dark .worker-list-item .worker-actions .btn-edit-sm:hover { background: #334155; }
+        body.dark .worker-list-item .worker-actions .btn-del-sm { background: #1e293b; color: #fca5a5; }
+        body.dark .worker-list-item .worker-actions .btn-del-sm:hover { background: #334155; }
+        body.dark .worker-list-item { border-left-color: var(--primary); }
+        body.dark .activity-item { border-bottom-color: #334155; }
+        body.dark .transaction-item { border-bottom-color: #334155; }
+        body.dark .reset-section { border-top-color: #334155; }
+        body.dark .worker-detail-item { border-bottom-color: #334155; }
+        body.dark .worker-detail-panel { border-top: 1px solid #334155; }
+        body.dark .event-dept-item { background: rgba(30, 41, 59, 0.7); }
+        body.dark .event-dept-item .event-dept-badge { color: #0f172a; }
+        body.dark .btn-danger-full { background: #b91c1c; color: #fff; }
+        body.dark .btn-danger-full:hover { background: #991b1b; }
 
-    .branches-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1.25rem;
-      margin-bottom: 2rem;
-    }
-    .branch-item {
-      background: #0d1f33;
-      border-radius: 20px;
-      padding: 1.25rem 1rem 1rem;
-      border: 1px solid #1e3a5f;
-      text-align: center;
-      transition: all 0.15s;
-    }
-    .branch-item:hover { border-color: #3a6a9a; background: #112b44; }
-    .branch-item i { font-size: 1.6rem; color: #6a9bd8; background: #1a3a5a; padding: 0.7rem; border-radius: 18px; margin-bottom: 0.5rem; }
-    .branch-item h4 { font-weight: 600; font-size: 1rem; color: #f0f4fa; }
-    .branch-item p { font-size: 0.8rem; color: #8aa9d1; font-weight: 500; }
-    .branch-item .badge { background: #1a3a5a; padding: 0.2rem 1rem; border-radius: 50px; font-size: 0.7rem; font-weight: 600; color: #6a9bd8; display: inline-block; margin-top: 8px; }
+        /* LOGIN PAGE */
+        .login-page {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--login-bg);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+            transition: 0.3s;
+        }
+        .login-page.hidden { display: none; }
+        .login-box {
+            background: rgba(255,255,255,0.95);
+            padding: 2.5rem 2.8rem;
+            border-radius: 32px;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 420px;
+            backdrop-filter: blur(8px);
+            animation: modalIn 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        body.dark .login-box {
+            background: rgba(30, 41, 59, 0.95);
+            color: #e2e8f0;
+            border-color: #334155;
+        }
+        .login-box h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        body.dark .login-box h1 { color: #60a5fa; }
+        .login-box .sub {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.8rem;
+        }
+        .login-box .form-group { margin-bottom: 1.2rem; }
+        .login-box label { font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.3rem; color: var(--text-dark); }
+        body.dark .login-box label { color: #e2e8f0; }
+        .login-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 1rem;
+            background: #f8fafc;
+            transition: 0.2s;
+        }
+        body.dark .login-box input {
+            background: #1e293b;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        .login-box input:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+        }
+        .login-box .btn-primary {
+            width: 100%;
+            padding: 0.85rem;
+            font-size: 1rem;
+            border-radius: 40px;
+            margin-top: 0.5rem;
+        }
+        .login-box .error-msg {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            text-align: center;
+            display: none;
+        }
+        body.dark .login-box .error-msg { color: #f87171; }
+        .login-box .brand-icon {
+            font-size: 2.5rem;
+            color: var(--green);
+        }
+        body.dark .login-box .brand-icon { color: #34d399; }
 
-    .management-panels {
-      display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 2rem;
-      margin-top: 0.5rem;
-    }
-    @media (max-width: 780px) { .management-panels { grid-template-columns: 1fr; gap: 2rem; } }
+        /* main app */
+        .app-wrapper { display: none; width: 100%; min-height: 100vh; }
+        .app-wrapper.active { display: flex; }
 
-    .panel {
-      background: #0d1f33;
-      border-radius: 24px;
-      padding: 1.5rem 1.5rem 1.8rem;
-      border: 1px solid #1e3a5f;
-    }
-    .panel h3 {
-      font-weight: 600;
-      font-size: 1.2rem;
-      color: #f0f4fa;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px dashed #1e3a5f;
-      padding-bottom: 0.7rem;
-    }
-    .panel h3 i { color: #6a9bd8; }
+        .reset-section-settings {
+            margin-top: 1.5rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 0.5rem;
+        }
+        .theme-toggle label {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        body.dark .theme-toggle label { color: #e2e8f0; }
+        .theme-toggle .toggle-track {
+            width: 48px;
+            height: 26px;
+            background: #e2e8f0;
+            border-radius: 40px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+        }
+        body.dark .theme-toggle .toggle-track {
+            background: #334155;
+        }
+        .theme-toggle .toggle-track .thumb {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: 0.3s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        body.dark .theme-toggle .toggle-track .thumb {
+            left: 25px;
+            background: #fbbf24;
+        }
+        .theme-toggle .toggle-track.dark-mode {
+            background: #1e293b;
+        }
+        .theme-toggle .toggle-track.dark-mode .thumb {
+            left: 25px;
+            background: #fbbf24;
+        }
 
-    .member-list-wrapper { max-height: 280px; overflow-y: auto; padding-right: 4px; margin-bottom: 1rem; scrollbar-width: thin; scrollbar-color: #2a4a6a #0d1f33; }
-    .member-list-wrapper::-webkit-scrollbar { width: 6px; }
-    .member-list-wrapper::-webkit-scrollbar-track { background: #0d1f33; border-radius: 12px; }
-    .member-list-wrapper::-webkit-scrollbar-thumb { background: #2a4a6a; border-radius: 12px; }
-    .member-list { display: flex; flex-direction: column; gap: 0.7rem; }
+        body { background: var(--bg); color: var(--text-dark); min-height: 100vh; background-image: url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center; background-attachment: fixed; background-repeat: no-repeat; }
+        .main-content, .sidebar { backdrop-filter: blur(2px); background-color: var(--main-bg); }
+        .sidebar { background-color: var(--sidebar-bg); backdrop-filter: blur(4px); }
+        .topbar, .panel, .stat-card, .department-card, .branch-card, .modal { background: var(--panel-bg); backdrop-filter: blur(2px); }
+        .sidebar-brand { border-bottom: 1px solid rgba(255,255,255,0.15); }
+        .sidebar-nav a:hover, .sidebar-nav a.active { background: rgba(255,255,255,0.15); }
+        .sidebar-nav a.active { background: var(--green); color: var(--primary); }
+        .sidebar {
+            width: var(--sidebar-width);
+            color: #fff;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            transition: transform var(--transition);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.12);
+        }
+        .sidebar-brand { display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 700; padding-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.8rem; }
+        .sidebar-brand i { color: var(--green); font-size: 2.2rem; }
+        .sidebar-brand span { color: #fff; }
+        .sidebar-brand small { font-size: 0.65rem; font-weight: 400; opacity: 0.6; display: block; letter-spacing: 0.3px; }
+        .sidebar-nav { flex: 1; }
+        .sidebar-nav a { display: flex; align-items: center; gap: 14px; padding: 0.7rem 1rem; border-radius: 12px; color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 500; transition: var(--transition); margin-bottom: 0.2rem; font-size: 0.95rem; cursor: pointer; }
+        .sidebar-nav a i { width: 24px; font-size: 1.2rem; transition: 0.2s; }
+        .sidebar-nav a:nth-child(1) i { color: #60a5fa; }
+        .sidebar-nav a:nth-child(2) i { color: #34d399; }
+        .sidebar-nav a:nth-child(3) i { color: #f472b6; }
+        .sidebar-nav a:nth-child(4) i { color: #fbbf24; }
+        .sidebar-nav a:nth-child(5) i { color: #fb923c; }
+        .sidebar-nav a:nth-child(6) i { color: #a78bfa; }
+        .sidebar-nav a:nth-child(7) i { color: #22d3ee; }
+        .sidebar-nav a:nth-child(8) i { color: #f87171; }
+        .sidebar-nav a:nth-child(9) i { color: #94a3b8; }
+        .sidebar-nav a:nth-child(10) i { color: #fbbf24; }
+        .sidebar-nav a:hover, .sidebar-nav a.active { background: rgba(255,255,255,0.1); color: #fff; }
+        .sidebar-nav a.active { background: var(--green); color: var(--primary); }
+        .sidebar-nav a.active i { color: var(--primary) !important; }
+        .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.5rem; margin-top: 0.5rem; }
+        .sidebar-footer a { color: rgba(255,255,255,0.5); text-decoration: none; display: flex; align-items: center; gap: 12px; padding: 0.6rem 1rem; border-radius: 10px; transition: var(--transition); cursor: pointer; }
+        .sidebar-footer a i { color: #f87171; }
+        .sidebar-footer a:hover { background: rgba(255,255,255,0.06); color: #fff; }
+        .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 1.5rem 2rem 2rem; transition: margin var(--transition); min-height: 100vh; width: calc(100% - var(--sidebar-width)); }
+        .topbar { display: flex; justify-content: space-between; align-items: center; height: var(--navbar-height); background: var(--panel-bg); padding: 0 2rem; border-radius: 28px; box-shadow: var(--shadow); margin-bottom: 2rem; backdrop-filter: blur(4px); }
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+        .topbar-left h2 { font-size: 1.3rem; font-weight: 600; color: var(--primary); }
+        .topbar-left .menu-toggle { display: none; background: none; border: none; font-size: 1.6rem; color: var(--primary); cursor: pointer; }
+        .topbar-right { display: flex; align-items: center; gap: 20px; }
+        .topbar-right .admin-badge { background: #eef2f9; color: var(--primary); padding: 0.4rem 1.2rem; border-radius: 40px; font-weight: 600; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; }
+        .topbar-right .admin-badge i { color: var(--green); }
+        .btn-logout { background: transparent; border: 1px solid #e2e8f0; padding: 0.4rem 1.4rem; border-radius: 40px; color: var(--text-muted); font-weight: 500; transition: var(--transition); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn-logout i { color: #f87171; }
+        .btn-logout:hover { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { border-radius: 24px; padding: 1.2rem 1.2rem 1rem; box-shadow: var(--card-shadow); transition: var(--transition); border-left: 6px solid var(--primary); position: relative; overflow: hidden; cursor: pointer; backdrop-filter: blur(4px); }
+        .stat-card:nth-child(1) { border-left-color: #3b82f6; }
+        .stat-card:nth-child(2) { border-left-color: #16a34a; }
+        .stat-card:nth-child(3) { border-left-color: #f59e0b; }
+        .stat-card:nth-child(4) { border-left-color: #ef4444; }
+        .stat-card:nth-child(5) { border-left-color: #8b5cf6; }
+        .stat-card:nth-child(6) { border-left-color: #06b6d4; }
+        .stat-card:nth-child(7) { border-left-color: #fbbf24; }
+        .stat-card .icon { font-size: 2rem; margin-bottom: 0.3rem; }
+        .stat-card .number { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .stat-card .label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.3px; text-transform: uppercase; font-weight: 600; }
+        .row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8rem; margin-bottom: 2rem; }
+        .row-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.8rem; margin-bottom: 2rem; }
+        .panel { border-radius: 24px; padding: 1.5rem; box-shadow: var(--card-shadow); backdrop-filter: blur(4px); }
+        .panel h3 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-dark); display: flex; align-items: center; gap: 10px; }
+        .panel h3 i { color: var(--green); }
+        .quick-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        .quick-actions button { background: var(--bg); border: none; padding: 0.6rem 1.2rem; border-radius: 40px; font-weight: 500; color: var(--primary); display: flex; align-items: center; gap: 8px; transition: var(--transition); cursor: pointer; font-size: 0.85rem; }
+        .quick-actions button i { color: var(--green); }
+        .quick-actions button:hover { background: var(--primary); color: #fff; }
+        .quick-actions button:hover i { color: #fff !important; }
+        .chart-container { position: relative; height: 200px; width: 100%; }
+        .chart-container.pie { height: 180px; width: 180px; margin: 0 auto; }
+        .chart-wrapper { display: flex; flex-direction: column; align-items: center; }
+        .chart-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1rem; margin-top: 0.75rem; font-size: 0.75rem; color: var(--text-muted); }
+        .chart-legend .legend-item { display: flex; align-items: center; gap: 6px; }
+        .chart-legend .legend-color { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
+        .activity-item { display: flex; align-items: center; gap: 14px; padding: 0.7rem 0; border-bottom: 1px solid #f1f5f9; }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-item i { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.9rem; }
+        .activity-item p { font-size: 0.9rem; }
+        .activity-item small { color: var(--text-muted); font-size: 0.7rem; }
+        .mock-table { width: 100%; font-size: 0.9rem; border-collapse: collapse; margin-top: 1rem; }
+        .mock-table th { text-align: left; padding: 0.6rem 0.3rem; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid #e9edf3; }
+        .mock-table td { padding: 0.6rem 0.3rem; border-bottom: 1px solid #f1f5f9; }
+        .badge { background: #dbeafe; color: #1e40af; padding: 0.2rem 0.8rem; border-radius: 30px; font-size: 0.7rem; font-weight: 600; }
+        .badge.success { background: #bbf7d0; color: #166534; }
+        .badge.warning { background: #fef3c7; color: #92400e; }
+        .badge.danger { background: #fee2e2; color: #991b1b; }
+        .badge.info { background: #dbeafe; color: #1e40af; }
+        .badge.purple { background: #ede9fe; color: #5b21b6; }
+        .badge.mpesa { background: #d1fae5; color: #00a859; }
+        .badge.airtel { background: #fee2e2; color: #e60000; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--panel-bg); border-radius: 28px; padding: 2rem; max-width: 600px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 24px 48px rgba(0,0,0,0.2); animation: modalIn 0.3s ease; backdrop-filter: blur(4px); }
+        @keyframes modalIn { from { transform: scale(0.9) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+        .modal h2 { font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--primary); display: flex; align-items: center; gap: 12px; }
+        .modal h2 i { color: var(--green); }
+        .modal .close-modal { margin-left: auto; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; color: var(--text-dark); }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.7rem 1rem; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; transition: var(--transition); background: var(--bg); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2); }
+        .btn-primary { background: var(--primary); color: #fff; border: none; padding: 0.7rem 2rem; border-radius: 40px; font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .btn-primary:hover { background: var(--primary-light); transform: translateY(-2px); }
+        .btn-secondary { background: #e2e8f0; color: var(--text-dark); border: none; padding: 0.7rem 2rem; border-radius: 40px; font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn-danger { background: var(--danger); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 30px; font-weight: 600; cursor: pointer; transition: var(--transition); font-size: 0.8rem; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-success { background: var(--green); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 30px; font-weight: 600; cursor: pointer; transition: var(--transition); font-size: 0.8rem; }
+        .btn-success:hover { background: var(--green-dark); }
+        .btn-warning { background: var(--warning); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 30px; font-weight: 600; cursor: pointer; transition: var(--transition); font-size: 0.8rem; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-reset { background: #fef3c7; color: #92400e; border: none; padding: 0.4rem 1rem; border-radius: 30px; font-weight: 600; cursor: pointer; transition: var(--transition); font-size: 0.75rem; }
+        .btn-reset:hover { background: #fde68a; }
+        .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--primary); color: #fff; padding: 1rem 2rem; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); display: none; align-items: center; gap: 12px; z-index: 3000; animation: slideIn 0.3s ease; max-width: 400px; }
+        .toast.show { display: flex; }
+        .toast.success { background: var(--green); }
+        .toast.error { background: var(--danger); }
+        .toast i { font-size: 1.2rem; }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+        .filter-bar { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .filter-bar input, .filter-bar select { padding: 0.5rem 1rem; border-radius: 30px; border: 1px solid #e2e8f0; background: var(--bg); }
+        .financial-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .financial-item { background: var(--panel-bg); padding: 1rem; border-radius: 16px; text-align: center; backdrop-filter: blur(4px); }
+        .financial-item .amount { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .financial-item .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+        .financial-item.income .amount { color: var(--green); }
+        .financial-item.expense .amount { color: var(--danger); }
+        .payment-method { display: inline-flex; align-items: center; gap: 4px; padding: 0.15rem 0.6rem; border-radius: 30px; font-size: 0.7rem; font-weight: 600; }
+        .payment-method.mpesa { background: #d1fae5; color: #00a859; }
+        .payment-method.airtel { background: #fee2e2; color: #e60000; }
+        .payment-method.cash { background: #e0e7ff; color: #3730a3; }
+        .payment-method.bank { background: #fef3c7; color: #92400e; }
+        .payment-method.card { background: #ede9fe; color: #5b21b6; }
+        .worker-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
+        .worker-list-item { background: var(--panel-bg); border-radius: 12px; padding: 0.8rem 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 4px solid var(--primary); transition: var(--transition); cursor: pointer; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .worker-list-item:hover { background: #f8fafc; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .worker-list-item .worker-info { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .worker-list-item .worker-name { font-weight: 600; color: var(--text-dark); font-size: 0.95rem; }
+        .worker-list-item .worker-detail { font-size: 0.8rem; color: var(--text-muted); }
+        .worker-list-item .worker-detail i { margin-right: 4px; color: var(--green); }
+        .worker-list-item .worker-badge { font-size: 0.7rem; padding: 0.15rem 0.7rem; border-radius: 30px; background: var(--green-light); color: var(--green-dark); font-weight: 600; }
+        .worker-list-item .worker-actions { display: flex; gap: 6px; }
+        .worker-list-item .worker-actions button { padding: 0.2rem 0.6rem; border-radius: 30px; border: none; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .worker-list-item .worker-actions .btn-view-sm { background: #dbeafe; color: #1e40af; }
+        .worker-list-item .worker-actions .btn-view-sm:hover { background: #bfdbfe; }
+        .worker-list-item .worker-actions .btn-edit-sm { background: #d1fae5; color: #065f46; }
+        .worker-list-item .worker-actions .btn-edit-sm:hover { background: #a7f3d0; }
+        .worker-list-item .worker-actions .btn-del-sm { background: #fee2e2; color: #991b1b; }
+        .worker-list-item .worker-actions .btn-del-sm:hover { background: #fecaca; }
+        .worker-detail-panel { display: none; background: var(--panel-bg); border-radius: 12px; padding: 1rem 1.5rem; margin-top: 0.3rem; margin-bottom: 0.3rem; animation: slideDown 0.25s ease; }
+        .worker-detail-panel.open { display: block; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        .worker-detail-panel .detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.5rem 1.5rem; }
+        .worker-detail-panel .detail-item { display: flex; flex-direction: column; }
+        .worker-detail-panel .detail-item .label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.3px; }
+        .worker-detail-panel .detail-item .value { font-weight: 500; color: var(--text-dark); font-size: 0.9rem; }
+        .worker-detail-item { display: flex; flex-direction: column; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; }
+        .worker-detail-item .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .worker-detail-item .value { font-weight: 600; color: var(--text-dark); font-size: 0.95rem; }
+        .worker-detail-item.full-width { grid-column: 1 / -1; }
+        .worker-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem 1.5rem; margin: 1rem 0; }
+        .department-card { background: var(--panel-bg); border-radius: 16px; padding: 1.5rem; text-align: center; box-shadow: var(--card-shadow); border-left: 4px solid var(--green); transition: var(--transition); position: relative; backdrop-filter: blur(4px); }
+        .department-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
+        .department-card h4 { margin: 0.5rem 0; color: var(--primary); }
+        .department-card .count { font-size: 2rem; font-weight: 700; color: var(--green); }
+        .department-card .label { color: var(--text-muted); font-size: 0.8rem; }
+        .department-card .dept-actions { margin-top: 0.8rem; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .department-card .dept-actions button { padding: 0.2rem 0.8rem; border-radius: 30px; border: none; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .dept-actions .btn-edit-dept { background: #dbeafe; color: #1e40af; }
+        .dept-actions .btn-edit-dept:hover { background: #bfdbfe; }
+        .dept-actions .btn-delete-dept { background: #fee2e2; color: #991b1b; }
+        .dept-actions .btn-delete-dept:hover { background: #fecaca; }
+        .btn-view { background: #e0e7ff; color: #1a0ec2; border: none; padding: 0.3rem 0.8rem; border-radius: 30px; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .btn-view:hover { background: #c7d2fe; }
+        .class-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.5rem; }
+        .class-header .count-badge { background: var(--primary); color: #fff; padding: 0.2rem 1rem; border-radius: 30px; font-size: 0.8rem; font-weight: 600; }
+        .transaction-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid #f1f5f9; }
+        .transaction-item:last-child { border-bottom: none; }
+        .transaction-item .tx-info { display: flex; flex-direction: column; }
+        .transaction-item .tx-info .tx-title { font-weight: 600; font-size: 0.9rem; color: var(--text-dark); }
+        .transaction-item .tx-info .tx-detail { font-size: 0.75rem; color: var(--text-muted); }
+        .transaction-item .tx-amount { font-weight: 700; font-size: 0.95rem; }
+        .transaction-item .tx-amount.income { color: var(--green); }
+        .transaction-item .tx-amount.expense { color: var(--danger); }
+        .reset-section { display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid #e9edf3; }
+        .branch-card { background: var(--panel-bg); border-radius: 16px; padding: 1.5rem; text-align: center; box-shadow: var(--card-shadow); border-left: 4px solid var(--warning); transition: var(--transition); backdrop-filter: blur(4px); }
+        .branch-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
+        .branch-card h4 { margin: 0.5rem 0; color: var(--primary); }
+        .branch-card .count { font-size: 1.8rem; font-weight: 700; color: var(--warning); }
+        .branch-card .label { color: var(--text-muted); font-size: 0.8rem; }
+        .branch-card .branch-actions { margin-top: 0.8rem; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .branch-card .branch-actions button { padding: 0.2rem 0.8rem; border-radius: 30px; border: none; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .branch-card .branch-actions .btn-edit-branch { background: #dbeafe; color: #1e40af; }
+        .branch-card .branch-actions .btn-edit-branch:hover { background: #bfdbfe; }
+        .branch-card .branch-actions .btn-delete-branch { background: #fee2e2; color: #991b1b; }
+        .branch-card .branch-actions .btn-delete-branch:hover { background: #fecaca; }
+        .event-dept-list { margin: 1rem 0; }
+        .event-dept-item { background: rgba(255,255,255,0.7); border-radius: 14px; padding: 0.8rem 1.2rem; margin-bottom: 0.6rem; border-left: 6px solid var(--primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .event-dept-item .event-info { display: flex; flex-direction: column; }
+        .event-dept-item .event-name { font-weight: 700; color: var(--text-dark); }
+        .event-dept-item .event-meta { font-size: 0.8rem; color: var(--text-muted); }
+        .event-dept-item .event-dept-badge { background: var(--primary); color: #fff; padding: 0.15rem 0.8rem; border-radius: 30px; font-size: 0.7rem; font-weight: 600; }
+        .btn-danger-full { background: var(--danger); color: #fff; border: none; padding: 0.6rem 1.8rem; border-radius: 40px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 10px; }
+        .btn-danger-full:hover { background: #b91c1c; transform: scale(1.02); }
+        footer { text-align: center; padding: 1.5rem 0 0; color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid #e9edf3; margin-top: 1.5rem; }
 
-    .dept-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.7rem;
-      max-height: 160px;
-      overflow-y: auto;
-      padding-right: 4px;
-      scrollbar-width: thin;
-      scrollbar-color: #2a4a6a #0d1f33;
-    }
-    .dept-list::-webkit-scrollbar { width: 6px; }
-    .dept-list::-webkit-scrollbar-track { background: #0d1f33; border-radius: 12px; }
-    .dept-list::-webkit-scrollbar-thumb { background: #2a4a6a; border-radius: 12px; }
-
-    .list-item {
-      background: #112b44;
-      padding: 0.7rem 1rem;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border: 1px solid #1e3a5f;
-      transition: all 0.15s;
-      flex-shrink: 0;
-    }
-    .list-item:hover { border-color: #3a6a9a; background: #1a3a5a; }
-    .list-item .info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
-    .list-item .name { font-weight: 600; color: #f0f4fa; font-size: 0.95rem; }
-    .list-item .phone { font-size: 0.75rem; color: #8aa9d1; display: flex; align-items: center; gap: 4px; }
-    .list-item .phone i { font-size: 0.7rem; color: #6a9bd8; }
-    .list-item .position-badge { font-size: 0.7rem; color: #fff; background: #1a5a9c; padding: 0.15rem 0.6rem; border-radius: 30px; width: fit-content; font-weight: 600; }
-    .list-item .badge-dept { background: #1a3a5a; padding: 0.2rem 0.8rem; border-radius: 30px; font-size: 0.7rem; font-weight: 600; color: #8aa9d1; margin: 0 0.5rem; white-space: nowrap; }
-    .list-item .dept-actions { display: flex; align-items: center; gap: 0.5rem; }
-
-    .add-section {
-      margin-top: 1.5rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .add-section input, .add-section select, .dept-add-section input, .dept-add-section select {
-      flex: 1 1 120px;
-      padding: 0.5rem 0.8rem;
-      border-radius: 40px;
-      border: 1px solid #1e3a5f;
-      background: #0d1f33;
-      color: #e2e8f0;
-      font-size: 0.85rem;
-      outline: none;
-      transition: all 0.15s;
-    }
-    .add-section input::placeholder, .dept-add-section input::placeholder { color: #5a7a9a; }
-    .add-section input:focus, .add-section select:focus, .dept-add-section input:focus, .dept-add-section select:focus {
-      border-color: #3a6a9a;
-      box-shadow: 0 0 0 3px rgba(26,90,156,0.2);
-    }
-    .phone-input-wrapper { position: relative; flex: 1 1 140px; min-width: 120px; }
-    .phone-input-wrapper input { width: 100%; padding-left: 2.2rem; }
-    .phone-input-wrapper i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #5a7a9a; font-size: 0.85rem; }
-
-    .dept-add-section {
-      margin-top: 1.5rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.6rem;
-      padding-top: 1rem;
-      border-top: 1px solid #1e3a5f;
-    }
-
-    .mini-cash {
-      background: #0d1f33;
-      border-radius: 18px;
-      padding: 0.8rem 1.2rem;
-      margin-top: 0.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border: 1px solid #1e3a5f;
-    }
-    .mini-cash span { font-weight: 500; color: #8aa9d1; }
-    .mini-cash .value { font-weight: 700; font-size: 1.1rem; color: #f0f4fa; }
-
-    .ledger-wrapper { max-height: 140px; overflow-y: auto; margin-top: 0.5rem; padding-right: 4px; scrollbar-width: thin; scrollbar-color: #2a4a6a #0d1f33; }
-    .ledger-wrapper::-webkit-scrollbar { width: 5px; }
-    .ledger-wrapper::-webkit-scrollbar-track { background: #0d1f33; border-radius: 12px; }
-    .ledger-wrapper::-webkit-scrollbar-thumb { background: #2a4a6a; border-radius: 12px; }
-    .ledger-item {
-      display: flex; justify-content: space-between; align-items: center;
-      background: #112b44; padding: 0.4rem 0.8rem; border-radius: 30px;
-      border: 1px solid #1e3a5f; margin-bottom: 0.3rem; font-size: 0.75rem;
-    }
-    .ledger-item .ledger-type.income { color: #4ade80; }
-    .ledger-item .ledger-type.expense { color: #f87171; }
-    .ledger-item .ledger-desc { color: #8aa9d1; font-size: 0.7rem; flex: 1; margin: 0 0.5rem; text-align: center; }
-    .ledger-item .ledger-time { color: #5a7a9a; font-size: 0.6rem; white-space: nowrap; margin-left: 0.3rem; }
-    .ledger-empty { color: #5a7a9a; font-size: 0.8rem; padding: 0.5rem 0; text-align: center; }
-    .ledger-header { display: flex; justify-content: space-between; margin-bottom: 0.2rem; }
-    .ledger-header span { font-weight: 600; font-size: 0.85rem; color: #8aa9d1; }
-    .ledger-header .count { font-size: 0.7rem; color: #5a7a9a; }
-
-    .charts-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    @media (max-width: 640px) { .charts-row { grid-template-columns: 1fr; } }
-    .chart-card {
-      background: #0d1f33;
-      border-radius: 20px;
-      padding: 1.25rem;
-      border: 1px solid #1e3a5f;
-      transition: all 0.15s;
-    }
-    .chart-card:hover { border-color: #3a6a9a; }
-    .chart-card h4 { font-weight: 600; color: #8aa9d1; font-size: 0.9rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
-    .chart-card h4 i { color: #6a9bd8; }
-    .chart-container { position: relative; height: 180px; }
-    .chart-container.pie-chart { height: 180px; }
-    .chart-legend-note { font-size: 0.65rem; color: #5a7a9a; text-align: center; margin-top: 0.3rem; }
-
-    .footer-note {
-      margin-top: 2rem;
-      border-top: 1px solid #1e3a5f;
-      padding-top: 1.5rem;
-      font-size: 0.8rem;
-      color: #5a7a9a;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .footer-note i { color: #6a9bd8; }
-  </style>
+        @media (max-width: 1400px) {
+            .row-3col { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 1024px) {
+            .row-2col, .row-3col { grid-template-columns: 1fr; }
+            .main-content { padding: 1rem 1.5rem; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); width: 280px; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 1rem; width: 100%; }
+            .topbar-left .menu-toggle { display: block; }
+            .cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .worker-detail-grid { grid-template-columns: 1fr; }
+            .worker-detail-panel .detail-grid { grid-template-columns: 1fr 1fr; }
+            .worker-list-item { flex-direction: column; align-items: stretch; }
+            .login-box { padding: 1.8rem; }
+            .topbar { padding: 0 1rem; flex-wrap: wrap; height: auto; min-height: var(--navbar-height); }
+            .topbar-right { width: 100%; justify-content: flex-end; margin-top: 6px; }
+        }
+        @media (max-width: 480px) {
+            .cards-grid { grid-template-columns: 1fr; }
+            .modal { padding: 1.5rem; }
+            .financial-summary { grid-template-columns: 1fr 1fr; }
+            .worker-detail-panel .detail-grid { grid-template-columns: 1fr; }
+            .login-box { padding: 1.2rem; }
+            .topbar-left h2 { font-size: 1rem; }
+            .topbar-right .admin-badge { font-size: 0.7rem; padding: 0.3rem 0.8rem; }
+            .btn-logout { padding: 0.3rem 0.8rem; font-size: 0.8rem; }
+            .stat-card .number { font-size: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
-<div class="system-card">
-
-  <div class="header">
-    <div class="brand">
-      <h1>T.R.C Int'l Thika</h1>
-      <span>Church Management · Landless</span>
-    </div>
-  </div>
-
-  <div class="cash-summary">
-    <div class="cash-total">
-      <span class="label"><i class="fas fa-coins" style="margin-right: 8px;"></i> Total cash</span>
-      <span class="amount"><span class="currency">KES</span> 0</span>
-    </div>
-    <div class="cash-actions">
-      <button class="btn btn-outline" id="addCashBtn"><i class="fas fa-plus-circle"></i> Income</button>
-      <button class="btn btn-outline" id="withdrawCashBtn"><i class="fas fa-minus-circle"></i> Withdraw</button>
-      <button class="btn btn-primary" id="refreshCashBtn"><i class="fas fa-sync-alt"></i> Sync</button>
-      <button class="btn btn-reset" id="resetSystemBtn"><i class="fas fa-undo-alt"></i> Reset</button>
-    </div>
-  </div>
-
-  <div class="branches-grid" id="branchesGrid"></div>
-
-  <div class="charts-row">
-    <div class="chart-card">
-      <h4><i class="fas fa-chart-bar"></i> Last 30 days · Cash flow</h4>
-      <div class="chart-container"><canvas id="cashFlowChart"></canvas></div>
-      <div class="chart-legend-note">🟢 Income &nbsp;|&nbsp; 🔴 Expense</div>
-    </div>
-    <div class="chart-card">
-      <h4><i class="fas fa-chart-pie"></i> Members by department</h4>
-      <div class="chart-container pie-chart"><canvas id="deptPieChart"></canvas></div>
-    </div>
-  </div>
-
-  <div class="management-panels">
-    <div class="panel">
-      <h3><i class="fas fa-user-friends"></i> Members</h3>
-      <div class="member-list-wrapper">
-        <div class="member-list" id="memberList"></div>
-      </div>
-      <div class="add-section">
-        <input type="text" id="memberNameInput" placeholder="Full name" />
-        <div class="phone-input-wrapper">
-          <i class="fas fa-phone"></i>
-          <input type="text" id="memberPhoneInput" placeholder="Phone" />
+    <!-- LOGIN PAGE -->
+    <div class="login-page" id="loginPage">
+        <div class="login-box">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:0.2rem;">
+                <i class="fas fa-church brand-icon"></i>
+                <h1>T.R.C INT'L</h1>
+            </div>
+            <div class="sub">Mt Kenya Region · Management System</div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Username</label>
+                    <input type="text" id="loginUsername" placeholder="Enter username" value="">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password" value="">
+                </div>
+                <div class="error-msg" id="loginError">Invalid username or password</div>
+                <button type="submit" class="btn-primary"><i class="fas fa-sign-in-alt"></i> Login</button>
+            </form>
         </div>
-        <select id="memberPositionSelect" class="position-select">
-          <option value="Chairperson">Chairperson</option><option value="Vice Chairperson">Vice Chairperson</option>
-          <option value="Secretary">Secretary</option><option value="Coordinator">Coordinator</option>
-          <option value="Treasurer">Treasurer</option><option value="Member" selected>Member</option>
-        </select>
-        <select id="memberDeptSelect"></select>
-        <button class="btn-small" id="addMemberBtn"><i class="fas fa-user-plus"></i> Add</button>
-      </div>
     </div>
 
-    <div class="panel">
-      <h3><i class="fas fa-sitemap"></i> Departments <span style="font-size:0.7rem; font-weight:400; color:#5a7a9a; margin-left:0.5rem;">(✕ remove)</span></h3>
-      <div class="dept-list" id="deptList"></div>
-      <div class="dept-add-section">
-        <input type="text" id="newDeptNameInput" placeholder="New dept name" />
-        <select id="newDeptIconSelect" class="dept-icon-selector">
-          <option value="fa-users">Users</option><option value="fa-music">Music</option>
-          <option value="fa-hand-holding-heart">Outreach</option><option value="fa-pray">Prayer</option>
-          <option value="fa-bible">Bible</option><option value="fa-children">Children</option>
-          <option value="fa-church">Church</option><option value="fa-hands-praying">Praying</option>
-        </select>
-        <button class="btn-dept-add" id="addDeptBtn"><i class="fas fa-plus"></i> Add</button>
-      </div>
-      <div class="mini-cash">
-        <span><i class="fas fa-wallet"></i> Recent cash</span>
-        <span class="value" id="recentCashLabel">KES 0</span>
-      </div>
-      <div style="margin-top: 0.6rem; display: flex; gap: 0.6rem; flex-wrap: wrap;">
-        <button class="btn btn-success btn-small" id="recordIncomeBtn" style="flex:1"><i class="fas fa-plus"></i> Income</button>
-        <button class="btn btn-outline btn-small" id="recordExpenseBtn" style="flex:1"><i class="fas fa-minus"></i> Expense</button>
-      </div>
-      <div style="margin-top: 0.8rem;">
-        <div class="ledger-header"><span><i class="fas fa-list-ul"></i> Transactions</span><span class="count" id="ledgerCount">0 entries</span></div>
-        <div class="ledger-wrapper" id="ledgerList"><div class="ledger-empty">No transactions yet</div></div>
-      </div>
+    <!-- MAIN APP WRAPPER -->
+    <div class="app-wrapper" id="appWrapper">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand"><div><span>T.R.C INT'L </span><small>Mt Kenya Region</small></div></div>
+            <nav class="sidebar-nav">
+                <a href="#" class="active" data-page="dashboard"><i class="fas fa-home"></i> Home</a>
+                <a href="#" data-page="workers"><i class="fas fa-users"></i> Church Workers</a>
+                <a href="#" data-page="tithes"><i class="fas fa-hand-holding-heart"></i> Tithes & Offerings</a>
+                <a href="#" data-page="events"><i class="fas fa-calendar-alt"></i> Events</a>
+                <a href="#" data-page="departments"><i class="fas fa-people-arrows"></i> Departments</a>
+                <a href="#" data-page="branches"><i class="fas fa-store-alt"></i> Branches</a>
+                <a href="#" data-page="financial"><i class="fas fa-coins"></i> Financial</a>
+                <a href="#" data-page="reports"><i class="fas fa-file-alt"></i> Reports</a>
+                <a href="#" data-page="settings"><i class="fas fa-cog"></i> Settings</a>
+            </nav>
+            <div class="sidebar-footer"><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h2 id="pageTitle">Dashboard</h2>
+                </div>
+                <div class="topbar-right">
+                    <span class="admin-badge"><i class="fas fa-user-shield"></i> <span id="adminName">Admin</span></span>
+                    <button class="btn-logout" id="logoutBtn2"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </header>
+
+            <!-- DASHBOARD -->
+            <div id="dashboardPage" class="page-section active">
+                <section class="cards-grid" id="statsGrid">
+                    <div class="stat-card"><div class="icon"><i class="fas fa-users"></i></div><div class="number" id="totalWorkers">0</div><div class="label">Total Workers</div></div>
+                    <div class="stat-card green"><div class="icon"><i class="fas fa-hand-holding-heart"></i></div><div class="number" id="totalTithes">KES 0</div><div class="label">Total Tithes</div></div>
+                    <div class="stat-card"><div class="icon"><i class="fas fa-donate"></i></div><div class="number" id="totalOfferings">KES 0</div><div class="label">Offerings</div></div>
+                    <div class="stat-card green"><div class="icon"><i class="fas fa-calendar-alt"></i></div><div class="number" id="totalEvents">0</div><div class="label">Events</div></div>
+                    <div class="stat-card"><div class="icon"><i class="fas fa-people-arrows"></i></div><div class="number" id="totalDepartments">0</div><div class="label">Departments</div></div>
+                    <div class="stat-card green"><div class="icon"><i class="fas fa-store-alt"></i></div><div class="number" id="totalBranches">0</div><div class="label">Branches</div></div>
+                </section>
+                <div class="row-2col">
+                    <div class="panel">
+                        <h3><i class="fas fa-bolt" style="color:#f59e0b;"></i> Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button onclick="openModal('workerModal')"><i class="fas fa-user-plus"></i> Add Worker</button>
+                            <button onclick="openModal('titheModal')"><i class="fas fa-hand-holding-heart"></i> Record Tithe</button>
+                            <button onclick="openModal('eventModal')"><i class="fas fa-calendar-plus"></i> New Event</button>
+                            <button onclick="openModal('expenseModal')"><i class="fas fa-money-bill-wave"></i> Add Expense</button>
+                            <button onclick="openModal('branchModal')"><i class="fas fa-store-alt"></i> Add Branch</button>
+                        </div>
+                        <div style="margin-top: 1.5rem;">
+                            <h3><i class="fas fa-clock" style="color:#3b82f6;"></i> Recent Activity</h3>
+                            <div id="recentActivity"><div class="activity-item"><i class="fas fa-spinner fa-spin"></i><div><p>Loading...</p><small>Just now</small></div></div></div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <h3><i class="fas fa-chart-pie" style="color:#8b5cf6;"></i> Giving Distribution</h3>
+                        <div class="chart-container pie"><canvas id="givingPieChart"></canvas></div>
+                        <div style="margin-top: 0.5rem; text-align:center; font-size:0.8rem; color:var(--text-muted);">
+                            <span style="display:inline-block; width:12px; height:12px; background:#3b82f6; border-radius:4px;"></span> Tithes &nbsp;
+                            <span style="display:inline-block; width:12px; height:12px; background:#16a34a; border-radius:4px;"></span> Offerings &nbsp;
+                            <span style="display:inline-block; width:12px; height:12px; background:#f59e0b; border-radius:4px;"></span> Thanksgiving &nbsp;
+                            <span style="display:inline-block; width:12px; height:12px; background:#ef4444; border-radius:4px;"></span> Donation
+                        </div>
+                    </div>
+                </div>
+                <div class="row-3col">
+                    <div class="panel"><h3><i class="fas fa-chart-line" style="color:#16a34a;"></i> Monthly Giving</h3><div class="chart-container"><canvas id="monthlyGivingChart"></canvas></div></div>
+                    <div class="panel"><h3><i class="fas fa-users" style="color:#8b5cf6;"></i> Recent Workers</h3><table class="mock-table" id="recentWorkersTable"><tbody id="recentWorkersBody"><tr><td>Loading...</td></tr></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- WORKERS PAGE -->
+            <div id="workersPage" class="page-section">
+                <div class="class-header"><h3><i class="fas fa-users" style="color:#34d399;"></i> Church Workers <span class="count-badge" id="workersCount">0</span></h3><div style="display:flex; gap:0.8rem; flex-wrap:wrap;"><input type="text" id="searchWorkerList" placeholder="Search workers..." style="padding:0.6rem 1rem; border-radius:40px; border:1px solid #e2e8f0; width:200px;"><button class="btn-primary" onclick="openModal('workerModal')"><i class="fas fa-plus"></i> Add Worker</button></div></div>
+                <div class="panel"><div id="workerListContainer"></div></div>
+            </div>
+
+            <!-- TITHES PAGE -->
+            <div id="tithesPage" class="page-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;"><h3><i class="fas fa-hand-holding-heart" style="color:#fbbf24;"></i> Tithes & Offerings</h3><button class="btn-primary" onclick="openModal('titheModal')"><i class="fas fa-plus"></i> Record Giving</button></div>
+                <div class="financial-summary" id="titheSummary"><div class="financial-item income"><div class="label">Total Tithes</div><div class="amount" id="titheTotal">KES 0</div></div><div class="financial-item income"><div class="label">Total Offerings</div><div class="amount" id="offeringTotal">KES 0</div></div><div class="financial-item income"><div class="label">Thanksgiving</div><div class="amount" id="thanksgivingTotal">KES 0</div></div><div class="financial-item income"><div class="label">Donations</div><div class="amount" id="donationTotal">KES 0</div></div></div>
+                <div class="panel"><div class="filter-bar"><select id="titheFilterType"><option value="">All Types</option><option value="Tithe">Tithe</option><option value="Offering">Offering</option><option value="Thanksgiving">Thanksgiving</option><option value="Donation">Donation</option></select><input type="date" id="titheFilterDate"><button class="btn-secondary" onclick="renderTithesTable()">Filter</button><button class="btn-secondary" onclick="document.getElementById('titheFilterType').value='';document.getElementById('titheFilterDate').value='';renderTithesTable();">Reset</button></div><div style="overflow-x:auto;"><table class="mock-table"><thead><tr><th>Worker</th><th>Amount</th><th>Type</th><th>Method</th><th>Date</th></tr></thead><tbody id="tithesBody"><tr><td colspan="5">Loading...</td></tr></tbody></table></div></div>
+            </div>
+
+            <!-- EVENTS PAGE -->
+            <div id="eventsPage" class="page-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                    <h3><i class="fas fa-calendar-alt" style="color:#fb923c;"></i> Events by Department</h3>
+                    <button class="btn-primary" onclick="openModal('eventModal')"><i class="fas fa-plus"></i> Create Event</button>
+                </div>
+                <div class="panel" id="eventsPanel">
+                    <div id="eventsByDepartmentContainer"></div>
+                </div>
+            </div>
+
+            <!-- DEPARTMENTS PAGE -->
+            <div id="departmentsPage" class="page-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;"><h3><i class="fas fa-people-arrows" style="color:#a78bfa;"></i> Church Departments</h3><button class="btn-primary" onclick="openModal('departmentModal')"><i class="fas fa-plus"></i> Add Department</button></div>
+                <div class="row-3col" id="departmentsGrid"></div>
+            </div>
+
+            <!-- BRANCHES PAGE -->
+            <div id="branchesPage" class="page-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;"><h3><i class="fas fa-store-alt" style="color:#fbbf24;"></i> Church Branches</h3><button class="btn-primary" onclick="openModal('branchModal')"><i class="fas fa-plus"></i> Add Branch</button></div>
+                <div class="row-3col" id="branchesGrid"></div>
+            </div>
+
+            <!-- FINANCIAL PAGE -->
+            <div id="financialPage" class="page-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;"><h3><i class="fas fa-coins" style="color:#22d3ee;"></i> Financial Records</h3><button class="btn-primary" onclick="openModal('expenseModal')"><i class="fas fa-plus"></i> Add Expense</button></div>
+                <div class="financial-summary" id="financialSummary"><div class="financial-item income"><div class="label">Total Income</div><div class="amount" id="totalIncome">KES 0</div></div><div class="financial-item expense"><div class="label">Total Expenses</div><div class="amount" id="totalExpenses">KES 0</div></div><div class="financial-item" style="background:var(--green-light);"><div class="label">Balance</div><div class="amount" id="financialBalance">KES 0</div></div></div>
+                <div class="row-2col"><div class="panel"><h3><i class="fas fa-chart-pie" style="color:#ef4444;"></i> Expense Distribution</h3><div class="chart-container pie"><canvas id="expensePieChart"></canvas></div></div><div class="panel"><h3><i class="fas fa-list" style="color:#f59e0b;"></i> Expense Categories</h3><div id="expenseCategoriesList"></div></div></div>
+                <div class="panel" style="margin-bottom: 1.5rem;"><div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;"><h3><i class="fas fa-clock" style="color:#3b82f6;"></i> Recent Transactions</h3><div style="display:flex; gap:0.5rem; flex-wrap:wrap;"><span style="font-size:0.75rem; color:var(--text-muted); display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:12px; height:12px; border-radius:4px; background:var(--mpesa-green);"></span> MPESA</span><span style="font-size:0.75rem; color:var(--text-muted); display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:12px; height:12px; border-radius:4px; background:var(--airtel-red);"></span> Airtel Money</span></div></div><div id="recentTransactions"></div><div class="reset-section"><button class="btn-reset" onclick="resetTransactions()"><i class="fas fa-undo"></i> Reset Transactions</button><button class="btn-secondary" onclick="renderRecentTransactions()" style="padding:0.4rem 1rem; font-size:0.75rem;"><i class="fas fa-sync"></i> Refresh</button></div></div>
+                <div class="panel"><h3><i class="fas fa-receipt" style="color:#34d399;"></i> Expense History</h3><div style="overflow-x:auto;"><table class="mock-table"><thead><tr><th>Category</th><th>Description</th><th>Amount</th><th>Payment Method</th><th>Date</th></tr></thead><tbody id="expensesBody"><tr><td colspan="5">No expenses recorded</td></tr></tbody></table></div></div>
+            </div>
+
+            <!-- REPORTS PAGE -->
+            <div id="reportsPage" class="page-section">
+                <h3><i class="fas fa-file-alt" style="color:#f87171;"></i> Reports</h3>
+                <div class="row-2col">
+                    <div class="panel"><h3><i class="fas fa-download" style="color:#3b82f6;"></i> Generate Reports (Excel)</h3><div style="display:flex; flex-direction:column; gap:1rem;"><button class="btn-primary" onclick="generateReport('workers')"><i class="fas fa-users"></i> Workers Report (Excel)</button><button class="btn-primary" onclick="generateReport('tithes')"><i class="fas fa-hand-holding-heart"></i> Tithes Report (Excel)</button><button class="btn-primary" onclick="generateReport('financial')"><i class="fas fa-coins"></i> Financial Report (Excel)</button><button class="btn-primary" onclick="generateReport('events')"><i class="fas fa-calendar-alt"></i> Events Report (Excel)</button></div></div>
+                    <div class="panel"><h3><i class="fas fa-print" style="color:#16a34a;"></i> Quick Summary</h3><div id="reportSummary"><p><strong>Total Workers:</strong> <span id="reportWorkers">0</span></p><p><strong>Total Tithes:</strong> KES <span id="reportTithes">0</span></p><p><strong>Total Offerings:</strong> KES <span id="reportOfferings">0</span></p><p><strong>Total Events:</strong> <span id="reportEvents">0</span></p><p><strong>Total Income:</strong> KES <span id="reportIncome">0</span></p><p><strong>Total Expenses:</strong> KES <span id="reportExpenses">0</span></p><p><strong>Total Branches:</strong> <span id="reportBranches">0</span></p></div></div>
+                </div>
+            </div>
+
+            <!-- SETTINGS PAGE -->
+            <div id="settingsPage" class="page-section">
+                <h3><i class="fas fa-cog" style="color:#94a3b8;"></i> Settings</h3>
+                <div class="panel" style="max-width:700px;">
+                    <form id="settingsForm">
+                        <div class="form-group"><label>Church Name</label><input type="text" id="churchName" value="TRC Thika"></div>
+                        <div class="form-group"><label>Pastor Name</label><input type="text" id="pastorName" value="Rev Francis Gatundu"></div>
+                        <div class="form-group"><label>Phone</label><input type="text" id="churchPhone" value="+254 711717607"></div>
+                        <div class="form-group"><label>Email</label><input type="email" id="churchEmail" value="trc123@gmail.com"></div>
+                        <div class="form-group"><label>Address</label><input type="text" id="churchAddress" value="Landless"></div>
+                        <div class="form-group"><label>Change Password</label><input type="password" id="newPassword" placeholder="Enter new password"></div>
+                        <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save Settings</button>
+                    </form>
+                    <div class="theme-toggle">
+                        <label><i class="fas fa-moon"></i> Dark Mode</label>
+                        <button class="toggle-track" id="themeToggle" type="button">
+                            <span class="thumb"></span>
+                        </button>
+                    </div>
+                    <div class="reset-section-settings">
+                        <button class="btn-danger-full" onclick="resetAllData()"><i class="fas fa-undo-alt"></i> Reset All Data</button>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">⚠️ This will permanently delete all church data.</span>
+                    </div>
+                </div>
+            </div>
+
+            <footer><i style="color:var(--green);"></i> T.R.C INT'L MANAGER &bull; Built for church management</footer>
+        </main>
     </div>
-  </div>
-  <div class="footer-note">
-    <span><i class="fas fa-check-circle"></i> System ready · <span id="deptCountDisplay">3</span> departments active</span>
-    <span><i class="fas fa-history"></i> Data persisted in memory</span>
-  </div>
-</div>
 
-<script>
-  (function() {
-    // ----- DATA (default state) -----
-    const DEFAULT_DEPT = {
-      'Youth': { members: 0, icon: 'fa-users' },
-      'Worship': { members: 0, icon: 'fa-music' },
-      'Evangelism': { members: 0, icon: 'fa-hand-holding-heart' }
-    };
-    const DEFAULT_MEMBERS = [
-      { name: 'ANN NJENGA', phone: '0705147835', position: 'Chairperson', dept: 'Youth' },
-      { name: 'BENSON MWAURA', phone: '0748338076', position: 'Vice Chairperson', dept: 'Youth' },
-      { name: 'PURITY NJOROGE', phone: '0734 567 890', position: 'Secretary', dept: 'Youth' },
-      { name: 'VINCENT MWANGANGI', phone: '0711717607', position: 'Chairperson', dept: 'Worship' }
-    ];
+    <!-- MODALS -->
+    <div class="modal-overlay" id="workerModal"><div class="modal"><h2><i class="fas fa-user-plus"></i> <span id="workerModalTitle">Add Church Worker</span> <button class="close-modal" onclick="closeModal('workerModal')">&times;</button></h2><form id="workerForm"><input type="hidden" id="editWorkerId" value=""><div class="form-group"><label>Full Name *</label><input type="text" id="wrkName" required placeholder="Vincent mwangangi"></div><div class="form-group"><label>Gender</label><select id="wrkGender"><option value="Male">Male</option><option value="Female">Female</option></select></div><div class="form-group"><label>Phone</label><input type="text" id="wrkPhone" placeholder="+254 711717607"></div><div class="form-group"><label>Email</label><input type="email" id="wrkEmail" placeholder="vincemwangi45@gmail.com"></div><div class="form-group"><label>Occupation</label><input type="text" id="wrkOccupation" placeholder="Doctor"></div><div class="form-group"><label>Address</label><input type="text" id="wrkAddress" placeholder="Nairobi, Kenya"></div><div class="form-group"><label>Marital Status</label><select id="wrkMarital"><option value="Single">Single</option><option value="Married">Married</option><option value="Divorced">Divorced</option><option value="Widowed">Widowed</option></select></div><div class="form-group"><label>Baptism Status</label><select id="wrkBaptism"><option value="Baptized">Baptized</option><option value="Not Baptized">Not Baptized</option></select></div><div class="form-group"><label>Department</label><select id="wrkDepartment"></select></div><div class="form-group"><label>Branch</label><select id="wrkBranch"></select></div><div class="form-group"><label>Join Date</label><input type="date" id="wrkJoinDate"></div><div style="display:flex; gap:1rem; justify-content:flex-end; margin-top:1.5rem;"><button type="button" class="btn-secondary" onclick="closeModal('workerModal')">Cancel</button><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save Worker</button></div></form></div></div>
+    <div class="modal-overlay" id="departmentModal"><div class="modal"><h2><i class="fas fa-people-arrows"></i> <span id="deptModalTitle">Add Department</span> <button class="close-modal" onclick="closeModal('departmentModal')">&times;</button></h2><form id="departmentForm"><input type="hidden" id="editDeptId" value=""><div class="form-group"><label>Department Name *</label><input type="text" id="deptName" required placeholder="e.g., Worship Team"></div><div class="form-group"><label>Description (optional)</label><input type="text" id="deptDescription" placeholder="Brief description of the department"></div><div style="display:flex; gap:1rem; justify-content:flex-end; margin-top:1.5rem;"><button type="button" class="btn-secondary" onclick="closeModal('departmentModal')">Cancel</button><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save Department</button></div></form></div></div>
+    <div class="modal-overlay" id="branchModal"><div class="modal"><h2><i class="fas fa-store-alt"></i> <span id="branchModalTitle">Add Branch</span> <button class="close-modal" onclick="closeModal('branchModal')">&times;</button></h2><form id="branchForm"><input type="hidden" id="editBranchId" value=""><div class="form-group"><label>Branch Name *</label><input type="text" id="branchName" required placeholder="e.g., Nairobi Central"></div><div class="form-group"><label>Location</label><input type="text" id="branchLocation" placeholder="City, Address"></div><div class="form-group"><label>Pastor in Charge</label><input type="text" id="branchPastor" placeholder="Pastor Name"></div><div style="display:flex; gap:1rem; justify-content:flex-end; margin-top:1.5rem;"><button type="button" class="btn-secondary" onclick="closeModal('branchModal')">Cancel</button><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save Branch</button></div></form></div></div>
+    <div class="modal-overlay" id="titheModal"><div class="modal"><h2><i class="fas fa-hand-holding-heart"></i> Record Giving <button class="close-modal" onclick="closeModal('titheModal')">&times;</button></h2><form id="titheForm"><div class="form-group"><label>Worker *</label><select id="titheWorker" required><option value="">Select Worker</option></select></div><div class="form-group"><label>Amount (KES) *</label><input type="number" id="titheAmount" required step="0.01" placeholder="500.00"></div><div class="form-group"><label>Type *</label><select id="titheType"><option value="Tithe">Tithe</option><option value="Offering">Offering</option><option value="Thanksgiving">Thanksgiving</option><option value="Donation">Donation</option></select></div><div class="form-group"><label>Payment Method *</label><select id="titheMethod"><option value="Cash">Cash</option><option value="MPESA">MPESA</option><option value="Airtel Money">Airtel Money</option><option value="Bank Transfer">Bank Transfer</option><option value="Card">Card</option></select></div><div style="display:flex; gap:1rem; justify-content:flex-end; margin-top:1.5rem;"><button type="button" class="btn-secondary" onclick="closeModal('titheModal')">Cancel</button><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Record</button></div></form></div></div>
+    <div class="modal-overlay" id="eventModal"><div class="modal"><h2><i class="fas fa-calendar-plus"></i> Create Event <button class="close-modal" onclick="closeModal('eventModal')">&times;</button></h2><form id="eventForm"><div class="form-group"><label>Event Name *</label><input type="text" id="eventName" required placeholder="Sunday Service"></div><div class="form-group"><label>Department (optional)</label><select id="eventDepartment"><option value="">None</option></select></div><div class="form-group"><label>Venue</label><input type="text" id="eventVenue" placeholder="Main Sanctuary"></div><div class="form-group"><label>Date *</label><input type="date" id="eventDate" required></div><div class="form-group"><label>Time *</label><input type="time" id="eventTime" required></div><div class="form-group"><label>Description</label><textarea id="eventDesc" rows="3" placeholder="Event details..."></textarea></div><div style="display:flex; gap:1rem; justify-content:flex-end; margin-top:1.5rem;"><button type="button" class="btn-secondary" onclick="closeModal('eventModal')">Cancel</button><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Create Event</button></div></form></div></div>
+    <div class="modal-overlay" id="expenseModal"><div class="modal"><h2><i class="fas fa-money-bill-wave"></i> Add Expense <button class="close-modal" onclick="closeModal('expenseModal')">&times;</button></h2><form id="expenseForm"><div class="form-group"><label>Category *</label><select id="expenseCategory" required><option value="Electricity">Electricity</option><option value="Rent">Rent</option><option value="Water">Water</option><option value="Fuel">Fuel</option><option value="Building">Building</option><option value="Pastor Support">Pastor Support</option><option value="Missions">Missions</option><option value="Welfare">Welfare</option><option value="Others">Others</option></select></div><div class="form-group"><label>Description</label><input type="text" id="expenseDesc" placeholder="Brief description"></div><div class="form-group"><label>Amount (KES) *</label><input type="number" id="expenseAmount" required step="0.01" placeholder="1000.00"></div><div class="form-group"><label>Payment Method *</label><select id="expenseMethod"><option value="Cash">Cash</option><option value="MPESA">MPESA</option><option value="Airtel Money">Airtel Money</option><option value="Bank Transfer">Bank Transfer</option><option value="Card">Card</option></select></div><div class="form-group"><label>Date *</label><input type="date" id="expenseDate" required></div><div style="display:flex; gap:1rem; justify-content:flex-end; margin-top:1.5rem;"><button type="button" class="btn-secondary" onclick="closeModal('expenseModal')">Cancel</button><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Add Expense</button></div></form></div></div>
+    <div class="modal-overlay" id="viewWorkerModal"><div class="modal"><h2><i class="fas fa-id-card" style="color:#3b82f6;"></i> Worker Profile <button class="close-modal" onclick="closeModal('viewWorkerModal')">&times;</button></h2><div id="viewWorkerContent"><div class="worker-detail-grid" id="workerDetailGrid"></div><div style="display:flex; gap:1rem; justify-content:flex-end; margin-top:1.5rem; border-top:1px solid #e9edf3; padding-top:1rem;"><button class="btn-secondary" onclick="closeModal('viewWorkerModal')">Close</button><button class="btn-primary" id="viewWorkerEditBtn"><i class="fas fa-edit"></i> Edit Worker</button></div></div></div></div>
 
-    // ----- runtime state -----
-    let deptData = JSON.parse(JSON.stringify(DEFAULT_DEPT));
-    let members = []; // store full member objects for reset
-    let cashLedger = [];
-    let totalCash = 0;
+    <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMessage">Success!</span></div>
 
-    // DOM
-    const memberList = document.getElementById('memberList');
-    const deptList = document.getElementById('deptList');
-    const branchesGrid = document.getElementById('branchesGrid');
-    const addMemberBtn = document.getElementById('addMemberBtn');
-    const memberNameInput = document.getElementById('memberNameInput');
-    const memberPhoneInput = document.getElementById('memberPhoneInput');
-    const memberPositionSelect = document.getElementById('memberPositionSelect');
-    const memberDeptSelect = document.getElementById('memberDeptSelect');
-    const newDeptNameInput = document.getElementById('newDeptNameInput');
-    const newDeptIconSelect = document.getElementById('newDeptIconSelect');
-    const addDeptBtn = document.getElementById('addDeptBtn');
-    const deptCountDisplay = document.getElementById('deptCountDisplay');
-    const recentCashLabel = document.getElementById('recentCashLabel');
-    const ledgerList = document.getElementById('ledgerList');
-    const ledgerCount = document.getElementById('ledgerCount');
+    <script>
+        // ===== LOGIN SYSTEM =====
+        const loginPage = document.getElementById('loginPage');
+        const appWrapper = document.getElementById('appWrapper');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
 
-    let cashFlowChart = null;
-    let deptPieChart = null;
+        if (sessionStorage.getItem('loggedIn') === 'true') {
+            loginPage.classList.add('hidden');
+            appWrapper.classList.add('active');
+        }
 
-    // ----- helpers -----
-    function updateDeptSelect() {
-      const current = memberDeptSelect.value;
-      memberDeptSelect.innerHTML = '';
-      Object.keys(deptData).forEach(name => {
-        const opt = document.createElement('option');
-        opt.value = name; opt.textContent = name;
-        memberDeptSelect.appendChild(opt);
-      });
-      if (Object.keys(deptData).includes(current)) memberDeptSelect.value = current;
-      else if (Object.keys(deptData).length) memberDeptSelect.value = Object.keys(deptData)[0];
-    }
-
-    function updateBranches() {
-      branchesGrid.innerHTML = '';
-      Object.keys(deptData).forEach(name => {
-        const card = document.createElement('div');
-        card.className = 'branch-item';
-        const icon = deptData[name].icon || 'fa-users';
-        const count = deptData[name].members || 0;
-        card.innerHTML = `
-          <i class="fas ${icon}"></i>
-          <h4>${name}</h4>
-          <p>${count} members</p>
-          <span class="badge">active</span>
-        `;
-        branchesGrid.appendChild(card);
-      });
-      updateCharts();
-    }
-
-    function updateDeptList() {
-      deptList.innerHTML = '';
-      Object.keys(deptData).forEach(name => {
-        const item = document.createElement('div');
-        item.className = 'list-item';
-        const icon = deptData[name].icon || 'fa-users';
-        const count = deptData[name].members || 0;
-        item.innerHTML = `
-          <span><i class="fas ${icon}" style="color:#6a9bd8; margin-right: 10px;"></i>${name}</span>
-          <div class="dept-actions">
-            <span class="badge-dept">${count} members</span>
-            <button class="btn-danger-small remove-dept-btn" data-dept="${name}"><i class="fas fa-times"></i></button>
-          </div>
-        `;
-        deptList.appendChild(item);
-      });
-      document.querySelectorAll('.remove-dept-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          removeDepartment(this.dataset.dept);
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            if (username === 'Admin' && password === 'talents123') {
+                sessionStorage.setItem('loggedIn', 'true');
+                loginPage.classList.add('hidden');
+                appWrapper.classList.add('active');
+                loginError.style.display = 'none';
+                showToast('Welcome back, Admin!');
+                renderAll();
+            } else {
+                loginError.style.display = 'block';
+                setTimeout(() => loginError.style.display = 'none', 3000);
+            }
         });
-      });
-      deptCountDisplay.textContent = Object.keys(deptData).length;
-      updateCharts();
-    }
 
-    function removeDepartment(deptName) {
-      if (Object.keys(deptData).length <= 1) { alert('Cannot remove last department.'); return; }
-      if ((deptData[deptName]?.members || 0) > 0 && !confirm(`Department "${deptName}" has members. Remove all?`)) return;
-      // remove members from this dept
-      members = members.filter(m => m.dept !== deptName);
-      delete deptData[deptName];
-      renderAllMembers();
-      updateDeptList(); updateBranches(); updateDeptSelect();
-    }
-
-    function addDepartment() {
-      const name = newDeptNameInput.value.trim();
-      if (!name) { alert('Enter department name.'); return; }
-      if (deptData[name]) { alert(`Department "${name}" exists.`); return; }
-      deptData[name] = { members: 0, icon: newDeptIconSelect.value };
-      updateDeptList(); updateBranches(); updateDeptSelect();
-      newDeptNameInput.value = '';
-      const btn = addDeptBtn;
-      const orig = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-check"></i> Added!';
-      setTimeout(() => btn.innerHTML = orig, 1500);
-    }
-
-    function renderMemberElement(name, phone, position, dept) {
-      const item = document.createElement('div');
-      item.className = 'list-item';
-      item.innerHTML = `
-        <div class="info">
-          <span class="name">${name}</span>
-          <span class="phone"><i class="fas fa-phone"></i> ${phone}</span>
-          <span class="position-badge">${position}</span>
-        </div>
-        <span class="badge-dept">${dept}</span>
-        <span class="action-icon"><i class="fas fa-ellipsis-v"></i></span>
-      `;
-      memberList.appendChild(item);
-    }
-
-    function renderAllMembers() {
-      memberList.innerHTML = '';
-      members.forEach(m => {
-        renderMemberElement(m.name, m.phone, m.position, m.dept);
-      });
-    }
-
-    function addMember() {
-      const name = memberNameInput.value.trim();
-      const phone = memberPhoneInput.value.trim();
-      const position = memberPositionSelect.value;
-      const dept = memberDeptSelect.value;
-      if (!name) { alert('Enter member name.'); return; }
-      if (!phone) { alert('Enter phone number.'); return; }
-      if (!deptData[dept]) { alert('Department no longer exists.'); updateDeptSelect(); return; }
-      // add to members array
-      members.push({ name, phone, position, dept });
-      deptData[dept].members = (deptData[dept].members || 0) + 1;
-      renderAllMembers();
-      updateDeptList(); updateBranches();
-      memberNameInput.value = ''; memberPhoneInput.value = '';
-      const btn = addMemberBtn;
-      const orig = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-check"></i> Added!';
-      btn.style.background = '#1a7a4a';
-      setTimeout(() => { btn.innerHTML = orig; btn.style.background = '#1a5a9c'; }, 1500);
-    }
-
-    function formatTime(iso) {
-      if (!iso) return '';
-      const d = new Date(iso);
-      return d.toLocaleString('en-KE', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-    }
-
-    function renderLedger() {
-      ledgerList.innerHTML = '';
-      if (cashLedger.length === 0) {
-        ledgerList.innerHTML = '<div class="ledger-empty">No transactions yet</div>';
-        ledgerCount.textContent = '0 entries';
-        return;
-      }
-      const reversed = [...cashLedger].reverse();
-      reversed.forEach(entry => {
-        const div = document.createElement('div');
-        div.className = 'ledger-item';
-        const typeClass = entry.type === 'income' ? 'income' : 'expense';
-        const sign = entry.type === 'income' ? '+' : '-';
-        div.innerHTML = `
-          <span class="ledger-type ${typeClass}">${entry.type === 'income' ? '📈 Income' : '📉 Expense'}</span>
-          <span class="ledger-desc">${entry.description || ''}</span>
-          <span class="ledger-amount" style="color:${entry.type === 'income' ? '#4ade80' : '#f87171'}">${sign} KES ${entry.amount.toLocaleString()}</span>
-          <span class="ledger-time">${formatTime(entry.timestamp)}</span>
-        `;
-        ledgerList.appendChild(div);
-      });
-      ledgerCount.textContent = `${cashLedger.length} entries`;
-    }
-
-    function updateCashDisplay() {
-      const amountEl = document.querySelector('.cash-total .amount');
-      if (amountEl) amountEl.innerHTML = `<span class="currency">KES</span> ${totalCash.toLocaleString()}`;
-      if (cashLedger.length > 0) {
-        const last = cashLedger[cashLedger.length - 1];
-        const sign = last.type === 'income' ? '+' : '-';
-        recentCashLabel.textContent = `${sign} KES ${last.amount.toLocaleString()}`;
-      } else { recentCashLabel.textContent = 'KES 0'; }
-      renderLedger();
-      updateCharts();
-    }
-
-    // ----- CHART: last 30 days (simulated with ledger entries) -----
-    function buildLast30DaysData() {
-      const now = new Date();
-      const dayLabels = [];
-      const incomeMap = {};
-      const expenseMap = {};
-      for (let i = 29; i >= 0; i--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - i);
-        const key = d.toISOString().split('T')[0];
-        dayLabels.push(key);
-        incomeMap[key] = 0;
-        expenseMap[key] = 0;
-      }
-      cashLedger.forEach(entry => {
-        if (!entry.timestamp) return;
-        const d = new Date(entry.timestamp);
-        const key = d.toISOString().split('T')[0];
-        if (incomeMap.hasOwnProperty(key)) {
-          if (entry.type === 'income') incomeMap[key] += entry.amount;
-          else expenseMap[key] += entry.amount;
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('loggedIn');
+                loginPage.classList.remove('hidden');
+                appWrapper.classList.remove('active');
+                showToast('Logged out successfully');
+            }
         }
-      });
-      const labels = dayLabels.map(d => d.slice(5)); // MM-DD
-      const incomeData = dayLabels.map(d => incomeMap[d] || 0);
-      const expenseData = dayLabels.map(d => expenseMap[d] || 0);
-      return { labels, incomeData, expenseData };
-    }
+        document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+        document.getElementById('logoutBtn2').addEventListener('click', handleLogout);
 
-    function updateCharts() {
-      // Pie chart
-      const deptNames = Object.keys(deptData);
-      const deptCounts = deptNames.map(n => deptData[n].members || 0);
-      const colors = ['#4ade80', '#6a9bd8', '#fbbf24', '#f87171', '#a78bfa', '#34d399', '#f472b6', '#60a5fa'];
-      if (deptPieChart) deptPieChart.destroy();
-      const pieCtx = document.getElementById('deptPieChart').getContext('2d');
-      deptPieChart = new Chart(pieCtx, {
-        type: 'doughnut',
-        data: {
-          labels: deptNames,
-          datasets: [{ data: deptCounts, backgroundColor: colors.slice(0, deptNames.length), borderColor: '#132237', borderWidth: 2 }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom', labels: { color: '#8aa9d1', font: { size: 10 }, boxWidth: 12, padding: 8 } }
-          }
+        // ===== DATA STORE =====
+        let workers = JSON.parse(localStorage.getItem('churchWorkers')) || [];
+        let departments = JSON.parse(localStorage.getItem('churchDepartments')) || [];
+        let branches = JSON.parse(localStorage.getItem('churchBranches')) || [];
+        let tithes = JSON.parse(localStorage.getItem('churchTithes')) || [];
+        let events = JSON.parse(localStorage.getItem('churchEvents')) || [];
+        let expenses = JSON.parse(localStorage.getItem('churchExpenses')) || [];
+        let settings = JSON.parse(localStorage.getItem('churchSettings')) || {};
+        let transactions = JSON.parse(localStorage.getItem('churchTransactions')) || [];
+
+        if (branches.length === 0) { branches = []; localStorage.setItem('churchBranches', JSON.stringify(branches)); }
+        if (departments.length === 0) { departments = []; localStorage.setItem('churchDepartments', JSON.stringify(departments)); }
+        if (workers.length === 0) { workers = []; localStorage.setItem('churchWorkers', JSON.stringify(workers)); }
+        if (tithes.length === 0) { tithes = []; localStorage.setItem('churchTithes', JSON.stringify(tithes)); }
+        if (transactions.length === 0) {
+            tithes.forEach(t => { transactions.push({ id: t.id, type: 'income', title: `${t.type} - ${t.workerName}`, amount: t.amount, method: t.method, date: t.date, category: t.type }); });
+            expenses.forEach(e => { transactions.push({ id: 'exp_' + e.id, type: 'expense', title: e.category, amount: e.amount, method: e.method || 'Cash', date: e.date, category: e.category }); });
+            transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+            localStorage.setItem('churchTransactions', JSON.stringify(transactions));
         }
-      });
+        if (events.length === 0) { events = []; localStorage.setItem('churchEvents', JSON.stringify(events)); }
+        if (expenses.length === 0) { expenses = []; localStorage.setItem('churchExpenses', JSON.stringify(expenses)); }
 
-      // Bar chart: last 30 days
-      const { labels, incomeData, expenseData } = buildLast30DaysData();
-      if (cashFlowChart) cashFlowChart.destroy();
-      const flowCtx = document.getElementById('cashFlowChart').getContext('2d');
-      cashFlowChart = new Chart(flowCtx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [
-            { label: 'Income', data: incomeData, backgroundColor: 'rgba(74, 222, 128, 0.7)', borderColor: '#4ade80', borderWidth: 1, borderRadius: 4, stack: 'stack1' },
-            { label: 'Expense', data: expenseData.map(v => -v), backgroundColor: 'rgba(248, 113, 113, 0.7)', borderColor: '#f87171', borderWidth: 1, borderRadius: 4, stack: 'stack1' }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top', labels: { color: '#8aa9d1', font: { size: 10 }, boxWidth: 12, padding: 8 } },
-            tooltip: { callbacks: { label: function(ctx) { let val = Math.abs(ctx.raw || 0); return `${ctx.dataset.label}: KES ${val.toLocaleString()}`; } } }
-          },
-          scales: {
-            y: { ticks: { color: '#8aa9d1', font: { size: 9 }, callback: v => 'KES ' + Math.abs(v).toLocaleString() }, grid: { color: '#1e3a5f' } },
-            x: { ticks: { color: '#8aa9d1', font: { size: 8 }, maxTicksLimit: 15 }, grid: { display: false } }
-          }
+        function getNextId(arr) { return arr.length > 0 ? Math.max(...arr.map(i => i.id)) + 1 : 1; }
+        function showToast(message, type = 'success') { const toast = document.getElementById('toast'); const toastMsg = document.getElementById('toastMessage'); toast.className = 'toast ' + type; toastMsg.textContent = message; toast.classList.add('show'); clearTimeout(toast._timer); toast._timer = setTimeout(() => toast.classList.remove('show'), 3000); }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        document.querySelectorAll('.modal-overlay').forEach(el => { el.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); }); });
+
+        // ===== NAVIGATION =====
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.dataset.page;
+                document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+                document.getElementById(page + 'Page').classList.add('active');
+                document.getElementById('pageTitle').textContent = this.textContent.trim();
+                if (page === 'dashboard') renderAll();
+                else if (page === 'workers') renderWorkerList();
+                else if (page === 'tithes') { renderTithesTable(); renderTitheSummary(); }
+                else if (page === 'events') renderEventsByDepartment();
+                else if (page === 'departments') renderDepartments();
+                else if (page === 'branches') renderBranches();
+                else if (page === 'financial') { renderExpensesTable(); renderFinancialSummary(); renderExpenseChart(); renderRecentTransactions(); }
+                else if (page === 'reports') updateReportSummary();
+                else if (page === 'settings') loadSettings();
+                if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+            });
+        });
+
+        // ===== THEME TOGGLE =====
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark');
+            themeToggle.classList.add('dark-mode');
         }
-      });
-    }
+        themeToggle.addEventListener('click', function() {
+            body.classList.toggle('dark');
+            this.classList.toggle('dark-mode');
+            localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
+        });
 
-    function addIncome() {
-      const amount = prompt('Enter income (KES):', '5000');
-      if (amount === null) return;
-      const val = parseInt(amount);
-      if (isNaN(val) || val <= 0) { alert('Enter valid positive number.'); return; }
-      const desc = prompt('Description:', 'Offering') || 'Income';
-      totalCash += val;
-      cashLedger.push({ type: 'income', amount: val, description: desc, timestamp: new Date().toISOString() });
-      updateCashDisplay();
-      alert(`✅ Income KES ${val.toLocaleString()} added. Balance: KES ${totalCash.toLocaleString()}`);
-    }
-
-    function withdrawCash() {
-      const amount = prompt('Enter expense (KES):', '2000');
-      if (amount === null) return;
-      const val = parseInt(amount);
-      if (isNaN(val) || val <= 0) { alert('Enter valid positive number.'); return; }
-      if (val > totalCash) { alert(`❌ Insufficient cash. Available: KES ${totalCash.toLocaleString()}`); return; }
-      const desc = prompt('Description:', 'Expense') || 'Expense';
-      totalCash -= val;
-      cashLedger.push({ type: 'expense', amount: val, description: desc, timestamp: new Date().toISOString() });
-      updateCashDisplay();
-      alert(`✅ Expense KES ${val.toLocaleString()} recorded. Balance: KES ${totalCash.toLocaleString()}`);
-    }
-
-    // ----- RESET FUNCTION -----
-    function resetSystem() {
-      if (!confirm('⚠️ Reset all data? This will clear members, departments, and transactions.')) return;
-      // reset data
-      deptData = JSON.parse(JSON.stringify(DEFAULT_DEPT));
-      members = DEFAULT_MEMBERS.map(m => ({ ...m }));
-      cashLedger = [];
-      totalCash = 0;
-
-      // re-count members in dept
-      Object.keys(deptData).forEach(d => deptData[d].members = 0);
-      members.forEach(m => {
-        if (deptData[m.dept]) deptData[m.dept].members += 1;
-      });
-
-      // re-render
-      renderAllMembers();
-      updateDeptList();
-      updateBranches();
-      updateDeptSelect();
-      updateCashDisplay();
-      alert('✅ System reset to default state.');
-    }
-
-    // ----- seed demo transactions (for visual) -----
-    function seedDemoTransactions() {
-      const now = new Date();
-      const amounts = [1200, 500, 3000, 1500, 800, 2200, 900, 4000, 600, 2500, 1000, 700, 1800, 3200];
-      for (let i = 0; i < 22; i++) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - Math.floor(Math.random() * 28) - 1);
-        const isIncome = Math.random() > 0.4;
-        const amt = amounts[Math.floor(Math.random() * amounts.length)];
-        if (isIncome) {
-          totalCash += amt;
-          cashLedger.push({ type: 'income', amount: amt, description: 'Offering', timestamp: d.toISOString() });
-        } else {
-          if (totalCash >= amt) { totalCash -= amt; cashLedger.push({ type: 'expense', amount: amt, description: 'Expense', timestamp: d.toISOString() }); }
+        // ===== RENDER FUNCTIONS =====
+        function renderStats() {
+            document.getElementById('totalWorkers').textContent = workers.length;
+            const totalTithes = tithes.filter(t => t.type === 'Tithe').reduce((sum, t) => sum + t.amount, 0);
+            const totalOfferings = tithes.filter(t => t.type === 'Offering' || t.type === 'Donation').reduce((sum, t) => sum + t.amount, 0);
+            document.getElementById('totalTithes').textContent = 'KES ' + totalTithes.toFixed(0);
+            document.getElementById('totalOfferings').textContent = 'KES ' + totalOfferings.toFixed(0);
+            document.getElementById('totalEvents').textContent = events.length;
+            document.getElementById('totalDepartments').textContent = departments.length;
+            document.getElementById('totalBranches').textContent = branches.length;
         }
-      }
-      totalCash += 2500;
-      cashLedger.push({ type: 'income', amount: 2500, description: 'Thanksgiving', timestamp: new Date().toISOString() });
-    }
+        function renderRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            const activities = [];
+            workers.slice(-3).forEach(w => { activities.push({ icon: 'fa-user', bg: '#3b82f6', text: `<strong>${w.name}</strong> added as worker`, time: 'Recently' }); });
+            tithes.slice(-2).forEach(t => { activities.push({ icon: 'fa-hand-holding-heart', bg: '#16a34a', text: `${t.type} of <strong>KES ${t.amount}</strong> from ${t.workerName}`, time: 'Recently' }); });
+            branches.slice(-2).forEach(b => { activities.push({ icon: 'fa-store-alt', bg: '#fbbf24', text: `Branch <strong>${b.name}</strong> added`, time: 'Recently' }); });
+            if (activities.length === 0) { container.innerHTML = `<div class="activity-item"><i class="fas fa-info-circle" style="background:#94a3b8;"></i><div><p>No recent activity</p></div></div>`; return; }
+            container.innerHTML = activities.slice(0, 5).map(a => `<div class="activity-item"><i class="fas ${a.icon}" style="background:${a.bg};"></i><div><p>${a.text}</p><small>${a.time}</small></div></div>`).join('');
+        }
+        function renderRecentWorkers() {
+            const tbody = document.getElementById('recentWorkersBody');
+            if (workers.length === 0) { tbody.innerHTML = '<tr><td>No workers yet</td></tr>'; return; }
+            tbody.innerHTML = workers.slice(-5).reverse().map(w => `<tr><td><strong>${w.name}</strong><br><small style="color:var(--text-muted);">${w.department || 'N/A'} ${w.branch ? '| ' + w.branch : ''}</small></td></tr>`).join('');
+        }
+        function renderWorkerList() {
+            const container = document.getElementById('workerListContainer');
+            document.getElementById('workersCount').textContent = workers.length;
+            if (workers.length === 0) { container.innerHTML = `<div style="text-align:center; padding:2rem; color:var(--text-muted);">No workers registered yet. <button class="btn-primary" onclick="openModal('workerModal')" style="margin-left:0.5rem; padding:0.3rem 1rem; font-size:0.85rem;">Add First Worker</button></div>`; return; }
+            let html = `<div class="worker-list">`;
+            workers.forEach((w) => {
+                html += `<div class="worker-list-item" onclick="toggleWorkerDetail(${w.id})"><div class="worker-info"><span class="worker-name">${w.name}</span><span class="worker-detail"><i class="fas fa-phone"></i> ${w.phone || 'N/A'}</span><span class="worker-detail"><i class="fas fa-envelope"></i> ${w.email || 'N/A'}</span><span class="worker-badge">${w.department || 'No Dept'}</span>${w.branch ? `<span class="worker-badge" style="background:#fef3c7;color:#92400e;">${w.branch}</span>` : ''}</div><div class="worker-actions" onclick="event.stopPropagation();"><button class="btn-view-sm" onclick="viewWorker(${w.id})"><i class="fas fa-eye"></i></button><button class="btn-edit-sm" onclick="editWorker(${w.id})"><i class="fas fa-edit"></i></button><button class="btn-del-sm" onclick="deleteWorker(${w.id})"><i class="fas fa-trash"></i></button></div></div><div class="worker-detail-panel" id="workerDetail_${w.id}"><div class="detail-grid"><div class="detail-item"><span class="label">Gender</span><span class="value">${w.gender || 'N/A'}</span></div><div class="detail-item"><span class="label">Occupation</span><span class="value">${w.occupation || 'N/A'}</span></div><div class="detail-item"><span class="label">Address</span><span class="value">${w.address || 'N/A'}</span></div><div class="detail-item"><span class="label">Marital Status</span><span class="value">${w.marital || 'N/A'}</span></div><div class="detail-item"><span class="label">Baptism</span><span class="value">${w.baptism || 'N/A'}</span></div><div class="detail-item"><span class="label">Join Date</span><span class="value">${w.joinDate || 'N/A'}</span></div><div class="detail-item"><span class="label">Department</span><span class="value">${w.department || 'N/A'}</span></div><div class="detail-item"><span class="label">Branch</span><span class="value">${w.branch || 'N/A'}</span></div><div class="detail-item"><span class="label">Worker ID</span><span class="value">#${w.id}</span></div></div></div>`;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+        function toggleWorkerDetail(id) { const panel = document.getElementById(`workerDetail_${id}`); if (panel) { panel.classList.toggle('open'); document.querySelectorAll('.worker-detail-panel.open').forEach(p => { if (p.id !== `workerDetail_${id}`) p.classList.remove('open'); }); } }
+        function viewWorker(id) {
+            const w = workers.find(wrk => wrk.id === id);
+            if (!w) { showToast('Worker not found', 'error'); return; }
+            const grid = document.getElementById('workerDetailGrid');
+            grid.innerHTML = `<div class="worker-detail-item"><span class="label">Full Name</span><span class="value">${w.name || 'N/A'}</span></div><div class="worker-detail-item"><span class="label">Gender</span><span class="value">${w.gender || 'N/A'}</span></div><div class="worker-detail-item"><span class="label">Phone</span><span class="value">${w.phone || 'N/A'}</span></div><div class="worker-detail-item"><span class="label">Email</span><span class="value">${w.email || 'N/A'}</span></div><div class="worker-detail-item"><span class="label">Occupation</span><span class="value">${w.occupation || 'N/A'}</span></div><div class="worker-detail-item"><span class="label">Address</span><span class="value">${w.address || 'N/A'}</span></div><div class="worker-detail-item"><span class="label">Marital Status</span><span class="value">${w.marital || 'N/A'}</span></div><div class="worker-detail-item"><span class="label">Baptism</span><span class="value">${w.baptism || 'N/A'}</span></div><div class="worker-detail-item"><span class="label">Department</span><span class="value">${w.department || 'N/A'}</span></div><div class="worker-detail-item"><span class="label">Branch</span><span class="value">${w.branch || 'N/A'}</span></div><div class="worker-detail-item"><span class="label">Join Date</span><span class="value">${w.joinDate || 'N/A'}</span></div><div class="worker-detail-item full-width" style="margin-top:0.5rem; border-bottom:none;"><span class="label">Worker ID</span><span class="value" style="color:var(--text-muted); font-weight:400;">#${w.id}</span></div>`;
+            document.getElementById('viewWorkerEditBtn').onclick = function() { closeModal('viewWorkerModal'); editWorker(id); };
+            document.getElementById('viewWorkerEditBtn').style.display = 'inline-block';
+            document.querySelector('#viewWorkerModal h2').innerHTML = `<i class="fas fa-id-card" style="color:#3b82f6;"></i> Worker Profile <button class="close-modal" onclick="closeModal('viewWorkerModal')">&times;</button>`;
+            openModal('viewWorkerModal');
+        }
+        function editWorker(id) {
+            const w = workers.find(wrk => wrk.id === id);
+            if (!w) return;
+            document.getElementById('editWorkerId').value = id;
+            document.getElementById('wrkName').value = w.name || '';
+            document.getElementById('wrkGender').value = w.gender || 'Male';
+            document.getElementById('wrkPhone').value = w.phone || '';
+            document.getElementById('wrkEmail').value = w.email || '';
+            document.getElementById('wrkOccupation').value = w.occupation || '';
+            document.getElementById('wrkAddress').value = w.address || '';
+            document.getElementById('wrkMarital').value = w.marital || 'Single';
+            document.getElementById('wrkBaptism').value = w.baptism || 'Baptized';
+            document.getElementById('wrkDepartment').value = w.department || 'Choir';
+            document.getElementById('wrkBranch').value = w.branch || 'None';
+            document.getElementById('wrkJoinDate').value = w.joinDate || '';
+            document.getElementById('workerModalTitle').textContent = 'Edit Church Worker';
+            openModal('workerModal');
+        }
+        function deleteWorker(id) { if (!confirm('Delete this worker permanently?')) return; workers = workers.filter(w => w.id !== id); localStorage.setItem('churchWorkers', JSON.stringify(workers)); renderAll(); if (document.getElementById('workersPage').classList.contains('active')) renderWorkerList(); showToast('Worker deleted'); }
 
-    // ----- init -----
-    function initializeSystem() {
-      // build members from default
-      members = DEFAULT_MEMBERS.map(m => ({ ...m }));
-      // count members per dept
-      Object.keys(deptData).forEach(d => deptData[d].members = 0);
-      members.forEach(m => {
-        if (deptData[m.dept]) deptData[m.dept].members += 1;
-      });
-      seedDemoTransactions();
-      renderAllMembers();
-      updateDeptList();
-      updateBranches();
-      updateDeptSelect();
-      updateCashDisplay();
-    }
+        // ===== TITHES =====
+        function renderTitheSummary() {
+            const titheTotal = tithes.filter(t => t.type === 'Tithe').reduce((s, t) => s + t.amount, 0);
+            const offeringTotal = tithes.filter(t => t.type === 'Offering').reduce((s, t) => s + t.amount, 0);
+            const thanksgivingTotal = tithes.filter(t => t.type === 'Thanksgiving').reduce((s, t) => s + t.amount, 0);
+            const donationTotal = tithes.filter(t => t.type === 'Donation').reduce((s, t) => s + t.amount, 0);
+            document.getElementById('titheTotal').textContent = 'KES ' + titheTotal.toFixed(0);
+            document.getElementById('offeringTotal').textContent = 'KES ' + offeringTotal.toFixed(0);
+            document.getElementById('thanksgivingTotal').textContent = 'KES ' + thanksgivingTotal.toFixed(0);
+            document.getElementById('donationTotal').textContent = 'KES ' + donationTotal.toFixed(0);
+        }
+        function renderTithesTable() {
+            const tbody = document.getElementById('tithesBody');
+            const filterType = document.getElementById('titheFilterType').value;
+            const filterDate = document.getElementById('titheFilterDate').value;
+            let filtered = tithes;
+            if (filterType) filtered = filtered.filter(t => t.type === filterType);
+            if (filterDate) filtered = filtered.filter(t => t.date === filterDate);
+            if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No records found</td></tr>'; return; }
+            tbody.innerHTML = filtered.map(t => { const methodClass = t.method === 'MPESA' ? 'mpesa' : t.method === 'Airtel Money' ? 'airtel' : t.method === 'Bank Transfer' ? 'bank' : t.method === 'Card' ? 'card' : 'cash'; return `<tr><td><strong>${t.workerName}</strong></td><td>KES ${t.amount.toFixed(2)}</td><td><span class="badge ${t.type === 'Tithe' ? 'success' : t.type === 'Offering' ? 'warning' : t.type === 'Thanksgiving' ? 'info' : 'danger'}">${t.type}</span></td><td><span class="payment-method ${methodClass}">${t.method}</span></td><td>${t.date}</td></tr>`; }).join('');
+        }
 
-    // event listeners
-    document.getElementById('addCashBtn').addEventListener('click', addIncome);
-    document.getElementById('withdrawCashBtn').addEventListener('click', withdrawCash);
-    document.getElementById('refreshCashBtn').addEventListener('click', function() {
-      alert(`🔄 Synced. Balance: KES ${totalCash.toLocaleString()}\nTransactions: ${cashLedger.length}`);
-    });
-    document.getElementById('recordIncomeBtn').addEventListener('click', addIncome);
-    document.getElementById('recordExpenseBtn').addEventListener('click', withdrawCash);
-    addMemberBtn.addEventListener('click', addMember);
-    addDeptBtn.addEventListener('click', addDepartment);
-    document.getElementById('resetSystemBtn').addEventListener('click', resetSystem);
-    memberNameInput.addEventListener('keypress', e => { if (e.key === 'Enter') addMember(); });
-    memberPhoneInput.addEventListener('keypress', e => { if (e.key === 'Enter') addMember(); });
-    newDeptNameInput.addEventListener('keypress', e => { if (e.key === 'Enter') addDepartment(); });
-    memberList.addEventListener('click', (e) => {
-      const item = e.target.closest('.list-item');
-      if (item) {
-        const name = item.querySelector('.name')?.textContent || '';
-        const phone = item.querySelector('.phone')?.textContent?.trim() || '';
-        const position = item.querySelector('.position-badge')?.textContent || '';
-        const dept = item.querySelector('.badge-dept')?.textContent || 'N/A';
-        alert(`👤 ${name}\n📞 ${phone}\n📌 ${position}\n🏷️ ${dept}`);
-      }
-    });
-    deptList.addEventListener('click', (e) => {
-      const item = e.target.closest('.list-item');
-      if (item && !e.target.closest('.remove-dept-btn')) {
-        const name = item.querySelector('span:first-child')?.textContent?.trim() || '';
-        const count = deptData[name]?.members || 0;
-        alert(`🏛️ ${name}\n👥 ${count} members`);
-      }
-    });
+        // ===== DEPARTMENTS =====
+        function renderDepartments() {
+            const grid = document.getElementById('departmentsGrid');
+            const colors = ['#3b82f6', '#16a34a', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f472b6', '#fb923c', '#a78bfa'];
+            if (departments.length === 0) { grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:2rem; color:var(--text-muted);">No departments created yet. <button class="btn-primary" onclick="openModal('departmentModal')" style="margin-left:0.5rem; padding:0.3rem 1rem; font-size:0.85rem;">Add First Department</button></div>`; return; }
+            grid.innerHTML = departments.map((d, index) => { const count = workers.filter(w => w.department === d.name).length; return `<div class="department-card" style="border-left-color: ${colors[index % colors.length]};"><h4>${d.name}</h4><div class="count">${count}</div><div class="label">Workers</div>${d.description ? `<div style="font-size:0.75rem; color:var(--text-muted); margin:0.3rem 0;">${d.description}</div>` : ''}<div class="dept-actions"><button class="btn-edit-dept" onclick="editDepartment(${d.id})"><i class="fas fa-edit"></i> Edit</button><button class="btn-delete-dept" onclick="deleteDepartment(${d.id})"><i class="fas fa-trash"></i> Delete</button><button class="btn-view" onclick="viewDepartmentWorkers('${d.name}')"><i class="fas fa-users"></i> View Workers</button></div></div>`; }).join('');
+        }
+        function viewDepartmentWorkers(departmentName) {
+            const deptWorkers = workers.filter(w => w.department === departmentName);
+            if (deptWorkers.length === 0) { showToast('No workers in this department', 'error'); return; }
+            const grid = document.getElementById('workerDetailGrid');
+            grid.innerHTML = deptWorkers.map(w => `<div class="worker-detail-item full-width" style="border-bottom:1px solid #f1f5f9; padding:0.3rem 0; cursor:pointer;" onclick="viewWorker(${w.id})"><span class="value">${w.name} <span style="color:var(--text-muted); font-weight:400; font-size:0.8rem;">(${w.phone || 'N/A'}) ${w.branch ? '| ' + w.branch : ''}</span></span></div>`).join('');
+            document.querySelector('#viewWorkerModal h2').innerHTML = `<i class="fas fa-people-arrows" style="color:#a78bfa;"></i> ${departmentName} Department <button class="close-modal" onclick="closeModal('viewWorkerModal')">&times;</button>`;
+            document.getElementById('viewWorkerEditBtn').style.display = 'none';
+            openModal('viewWorkerModal');
+            const origClose = document.querySelector('#viewWorkerModal .close-modal');
+            origClose.onclick = function() { closeModal('viewWorkerModal'); document.querySelector('#viewWorkerModal h2').innerHTML = `<i class="fas fa-id-card" style="color:#3b82f6;"></i> Worker Profile <button class="close-modal" onclick="closeModal('viewWorkerModal')">&times;</button>`; document.getElementById('viewWorkerEditBtn').style.display = 'inline-block'; };
+        }
+        function editDepartment(id) { const d = departments.find(dept => dept.id === id); if (!d) return; document.getElementById('editDeptId').value = id; document.getElementById('deptName').value = d.name; document.getElementById('deptDescription').value = d.description || ''; document.getElementById('deptModalTitle').textContent = 'Edit Department'; openModal('departmentModal'); }
+        function deleteDepartment(id) { const d = departments.find(dept => dept.id === id); if (!d) return; if (!confirm(`Delete department "${d.name}" permanently?`)) return; workers.forEach(w => { if (w.department === d.name) w.department = 'None'; }); localStorage.setItem('churchWorkers', JSON.stringify(workers)); departments = departments.filter(dept => dept.id !== id); localStorage.setItem('churchDepartments', JSON.stringify(departments)); renderAll(); if (document.getElementById('departmentsPage').classList.contains('active')) renderDepartments(); populateWorkerDropdowns(); updateDepartmentSelects(); showToast('Department deleted'); }
 
-    initializeSystem();
-  })();
-</script>
+        // ===== BRANCHES =====
+        function renderBranches() {
+            const grid = document.getElementById('branchesGrid');
+            const colors = ['#fbbf24', '#f59e0b', '#fb923c', '#f472b6', '#a78bfa', '#22d3ee'];
+            if (branches.length === 0) { grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:2rem; color:var(--text-muted);">No branches created yet. <button class="btn-primary" onclick="openModal('branchModal')" style="margin-left:0.5rem; padding:0.3rem 1rem; font-size:0.85rem;">Add First Branch</button></div>`; return; }
+            grid.innerHTML = branches.map((b, index) => { const count = workers.filter(w => w.branch === b.name).length; return `<div class="branch-card" style="border-left-color: ${colors[index % colors.length]};"><h4>${b.name}</h4><div style="font-size:0.85rem; color:var(--text-muted);">${b.location || 'No location'}</div><div style="font-size:0.85rem; color:var(--text-muted);">${b.pastor || 'No pastor assigned'}</div><div class="count">${count}</div><div class="label">Workers</div><div class="branch-actions"><button class="btn-edit-branch" onclick="editBranch(${b.id})"><i class="fas fa-edit"></i> Edit</button><button class="btn-delete-branch" onclick="deleteBranch(${b.id})"><i class="fas fa-trash"></i> Delete</button><button class="btn-view" onclick="viewBranchWorkers('${b.name}')"><i class="fas fa-users"></i> View Workers</button></div></div>`; }).join('');
+        }
+        function viewBranchWorkers(branchName) {
+            const branchWorkers = workers.filter(w => w.branch === branchName);
+            if (branchWorkers.length === 0) { showToast('No workers in this branch', 'error'); return; }
+            const grid = document.getElementById('workerDetailGrid');
+            grid.innerHTML = branchWorkers.map(w => `<div class="worker-detail-item full-width" style="border-bottom:1px solid #f1f5f9; padding:0.3rem 0; cursor:pointer;" onclick="viewWorker(${w.id})"><span class="value">${w.name} <span style="color:var(--text-muted); font-weight:400; font-size:0.8rem;">(${w.department || 'No Dept'})</span></span></div>`).join('');
+            document.querySelector('#viewWorkerModal h2').innerHTML = `<i class="fas fa-store-alt" style="color:#fbbf24;"></i> ${branchName} Branch <button class="close-modal" onclick="closeModal('viewWorkerModal')">&times;</button>`;
+            document.getElementById('viewWorkerEditBtn').style.display = 'none';
+            openModal('viewWorkerModal');
+            const origClose = document.querySelector('#viewWorkerModal .close-modal');
+            origClose.onclick = function() { closeModal('viewWorkerModal'); document.querySelector('#viewWorkerModal h2').innerHTML = `<i class="fas fa-id-card" style="color:#3b82f6;"></i> Worker Profile <button class="close-modal" onclick="closeModal('viewWorkerModal')">&times;</button>`; document.getElementById('viewWorkerEditBtn').style.display = 'inline-block'; };
+        }
+        function editBranch(id) { const b = branches.find(branch => branch.id === id); if (!b) return; document.getElementById('editBranchId').value = id; document.getElementById('branchName').value = b.name; document.getElementById('branchLocation').value = b.location || ''; document.getElementById('branchPastor').value = b.pastor || ''; document.getElementById('branchModalTitle').textContent = 'Edit Branch'; openModal('branchModal'); }
+        function deleteBranch(id) { const b = branches.find(branch => branch.id === id); if (!b) return; if (!confirm(`Delete branch "${b.name}" permanently?`)) return; workers.forEach(w => { if (w.branch === b.name) w.branch = 'None'; }); localStorage.setItem('churchWorkers', JSON.stringify(workers)); branches = branches.filter(branch => branch.id !== id); localStorage.setItem('churchBranches', JSON.stringify(branches)); renderAll(); if (document.getElementById('branchesPage').classList.contains('active')) renderBranches(); populateWorkerDropdowns(); updateBranchSelects(); showToast('Branch deleted'); }
+        function updateBranchSelects() { ['wrkBranch'].forEach(id => { const sel = document.getElementById(id); if (!sel) return; const current = sel.value; sel.innerHTML = branches.map(b => `<option value="${b.name}">${b.name}</option>`).join('') + '<option value="None">None</option>'; if (current) sel.value = current; }); }
+        function updateDepartmentSelects() { ['wrkDepartment'].forEach(id => { const sel = document.getElementById(id); if (!sel) return; const current = sel.value; sel.innerHTML = departments.map(d => `<option value="${d.name}">${d.name}</option>`).join('') + '<option value="None">None</option>'; if (current) sel.value = current; }); }
+
+        // ===== FINANCIAL =====
+        function renderExpensesTable() {
+            const tbody = document.getElementById('expensesBody');
+            if (expenses.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No expenses recorded</td></tr>'; return; }
+            tbody.innerHTML = expenses.map(e => { const methodClass = e.method === 'MPESA' ? 'mpesa' : e.method === 'Airtel Money' ? 'airtel' : e.method === 'Bank Transfer' ? 'bank' : e.method === 'Card' ? 'card' : 'cash'; return `<tr><td><span class="badge warning">${e.category}</span></td><td>${e.description || '-'}</td><td>KES ${e.amount.toFixed(2)}</td><td><span class="payment-method ${methodClass}">${e.method || 'Cash'}</span></td><td>${e.date}</td></tr>`; }).join('');
+        }
+        function renderFinancialSummary() { const income = tithes.reduce((s, t) => s + t.amount, 0); const exp = expenses.reduce((s, e) => s + e.amount, 0); document.getElementById('totalIncome').textContent = 'KES ' + income.toFixed(0); document.getElementById('totalExpenses').textContent = 'KES ' + exp.toFixed(0); document.getElementById('financialBalance').textContent = 'KES ' + (income - exp).toFixed(0); }
+        function updateReportSummary() {
+            const income = tithes.reduce((s, t) => s + t.amount, 0);
+            const exp = expenses.reduce((s, e) => s + e.amount, 0);
+            document.getElementById('reportWorkers').textContent = workers.length;
+            document.getElementById('reportTithes').textContent = tithes.filter(t => t.type === 'Tithe').reduce((s, t) => s + t.amount, 0).toFixed(0);
+            document.getElementById('reportOfferings').textContent = tithes.filter(t => t.type === 'Offering').reduce((s, t) => s + t.amount, 0).toFixed(0);
+            document.getElementById('reportEvents').textContent = events.length;
+            document.getElementById('reportIncome').textContent = income.toFixed(0);
+            document.getElementById('reportExpenses').textContent = exp.toFixed(0);
+            document.getElementById('reportBranches').textContent = branches.length;
+        }
+        function loadSettings() {
+            document.getElementById('churchName').value = settings.churchName || 'TRC Thika';
+            document.getElementById('pastorName').value = settings.pastorName || 'Rev Francis Gatundu';
+            document.getElementById('churchPhone').value = settings.churchPhone || '+254 711717607';
+            document.getElementById('churchEmail').value = settings.churchEmail || 'trc123@gmail.com';
+            document.getElementById('churchAddress').value = settings.churchAddress || 'Landless';
+        }
+        function populateWorkerDropdowns() {
+            ['titheWorker'].forEach(id => { const sel = document.getElementById(id); if (!sel) return; const current = sel.value; sel.innerHTML = '<option value="">Select Worker</option>' + workers.map(w => `<option value="${w.id}">${w.name} ${w.branch ? '(' + w.branch + ')' : ''}</option>`).join(''); if (current) sel.value = current; });
+        }
+        function addTransaction(type, title, amount, method, date, category = '') {
+            transactions.unshift({ id: Date.now(), type, title, amount, method, date: date || new Date().toISOString().split('T')[0], category });
+            if (transactions.length > 100) transactions = transactions.slice(0, 100);
+            localStorage.setItem('churchTransactions', JSON.stringify(transactions));
+            if (document.getElementById('financialPage').classList.contains('active')) renderRecentTransactions();
+        }
+        function renderRecentTransactions() {
+            const container = document.getElementById('recentTransactions');
+            const txs = transactions.slice(0, 15);
+            if (txs.length === 0) { container.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-muted);">No transactions recorded yet.</div>`; return; }
+            container.innerHTML = txs.map(tx => { const methodClass = tx.method === 'MPESA' ? 'mpesa' : tx.method === 'Airtel Money' ? 'airtel' : tx.method === 'Bank Transfer' ? 'bank' : tx.method === 'Card' ? 'card' : 'cash'; const isIncome = tx.type === 'income'; return `<div class="transaction-item"><div class="tx-info"><span class="tx-title">${tx.title}</span><span class="tx-detail">${tx.date} &bull; <span class="payment-method ${methodClass}">${tx.method}</span>${tx.category ? ` &bull; ${tx.category}` : ''}</span></div><div class="tx-amount ${isIncome ? 'income' : 'expense'}">${isIncome ? '+' : '-'} KES ${tx.amount.toFixed(2)}</div></div>`; }).join('');
+        }
+        function resetTransactions() { if (!confirm('This will clear all transaction history. Are you sure?')) return; transactions = []; localStorage.setItem('churchTransactions', JSON.stringify(transactions)); renderRecentTransactions(); showToast('Transactions reset successfully'); }
+
+        // ===== EVENTS BY DEPARTMENT =====
+        function renderEventsByDepartment() {
+            const container = document.getElementById('eventsByDepartmentContainer');
+            if (events.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:2rem; color:var(--text-muted);">No events scheduled. <button class="btn-primary" onclick="openModal('eventModal')" style="margin-left:0.5rem;">Create Event</button></div>`;
+                return;
+            }
+            const grouped = {};
+            events.forEach(ev => {
+                const dept = ev.department || 'General';
+                if (!grouped[dept]) grouped[dept] = [];
+                grouped[dept].push(ev);
+            });
+            const deptColors = ['#3b82f6', '#16a34a', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f472b6', '#fb923c', '#a78bfa'];
+            let colorIndex = 0;
+            let html = '';
+            for (const [dept, evs] of Object.entries(grouped)) {
+                const color = deptColors[colorIndex % deptColors.length];
+                colorIndex++;
+                html += `<div style="margin-bottom: 1.5rem;"><h4 style="color:${color}; display:flex; align-items:center; gap:0.5rem;"><i class="fas fa-people-arrows"></i> ${dept} <span class="badge" style="background:${color}; color:#fff; font-size:0.7rem;">${evs.length} events</span></h4><div class="event-dept-list">`;
+                evs.forEach(ev => {
+                    html += `<div class="event-dept-item" style="border-left-color:${color};">
+                        <div class="event-info">
+                            <span class="event-name">${ev.name}</span>
+                            <span class="event-meta">${ev.venue || 'No venue'} &bull; ${ev.date} at ${ev.time}</span>
+                            ${ev.description ? `<span style="font-size:0.75rem; color:var(--text-muted);">${ev.description}</span>` : ''}
+                        </div>
+                        <span class="event-dept-badge" style="background:${color};">${dept}</span>
+                    </div>`;
+                });
+                html += `</div></div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        // ===== RESET ALL DATA =====
+        function resetAllData() {
+            if (!confirm('⚠️ WARNING: This will permanently delete ALL DATA (workers, tithes, events, expenses, branches, departments, transactions). Are you sure?')) return;
+            if (!confirm('Final confirmation: This action cannot be undone. Click OK to erase all data.')) return;
+            workers = []; departments = []; branches = []; tithes = []; events = []; expenses = []; transactions = []; settings = {};
+            localStorage.removeItem('churchWorkers');
+            localStorage.removeItem('churchDepartments');
+            localStorage.removeItem('churchBranches');
+            localStorage.removeItem('churchTithes');
+            localStorage.removeItem('churchEvents');
+            localStorage.removeItem('churchExpenses');
+            localStorage.removeItem('churchTransactions');
+            localStorage.removeItem('churchSettings');
+            localStorage.setItem('churchWorkers', JSON.stringify(workers));
+            localStorage.setItem('churchDepartments', JSON.stringify(departments));
+            localStorage.setItem('churchBranches', JSON.stringify(branches));
+            localStorage.setItem('churchTithes', JSON.stringify(tithes));
+            localStorage.setItem('churchEvents', JSON.stringify(events));
+            localStorage.setItem('churchExpenses', JSON.stringify(expenses));
+            localStorage.setItem('churchTransactions', JSON.stringify(transactions));
+            showToast('All data has been reset successfully!', 'success');
+            renderAll();
+            document.querySelector('.sidebar-nav a[data-page="dashboard"]').click();
+        }
+
+        // ===== CRUD FORMS =====
+        document.getElementById('workerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editWorkerId').value);
+            const data = { name: document.getElementById('wrkName').value.trim(), gender: document.getElementById('wrkGender').value, phone: document.getElementById('wrkPhone').value.trim(), email: document.getElementById('wrkEmail').value.trim(), occupation: document.getElementById('wrkOccupation').value.trim(), address: document.getElementById('wrkAddress').value.trim(), marital: document.getElementById('wrkMarital').value, baptism: document.getElementById('wrkBaptism').value, department: document.getElementById('wrkDepartment').value, branch: document.getElementById('wrkBranch').value, joinDate: document.getElementById('wrkJoinDate').value || new Date().toISOString().split('T')[0] };
+            if (!data.name) { showToast('Name is required', 'error'); return; }
+            if (id) { const index = workers.findIndex(w => w.id === id); if (index !== -1) { workers[index] = { ...workers[index], ...data }; showToast('Worker updated successfully!'); } } else { data.id = getNextId(workers); workers.push(data); showToast('Worker added successfully!'); }
+            localStorage.setItem('churchWorkers', JSON.stringify(workers));
+            closeModal('workerModal');
+            this.reset();
+            document.getElementById('editWorkerId').value = '';
+            document.getElementById('workerModalTitle').textContent = 'Add Church Worker';
+            renderAll();
+            if (document.getElementById('workersPage').classList.contains('active')) renderWorkerList();
+        });
+
+        document.getElementById('departmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editDeptId').value);
+            const name = document.getElementById('deptName').value.trim();
+            const description = document.getElementById('deptDescription').value.trim();
+            if (!name) { showToast('Department name is required', 'error'); return; }
+            const duplicate = departments.find(d => d.name.toLowerCase() === name.toLowerCase() && d.id !== id);
+            if (duplicate) { showToast('A department with this name already exists', 'error'); return; }
+            if (id) { const index = departments.findIndex(d => d.id === id); if (index !== -1) { const oldName = departments[index].name; departments[index] = { id, name, description }; workers.forEach(w => { if (w.department === oldName) w.department = name; }); localStorage.setItem('churchWorkers', JSON.stringify(workers)); showToast('Department updated successfully!'); } } else { departments.push({ id: getNextId(departments), name, description }); showToast('Department added successfully!'); }
+            localStorage.setItem('churchDepartments', JSON.stringify(departments));
+            closeModal('departmentModal');
+            this.reset();
+            document.getElementById('editDeptId').value = '';
+            document.getElementById('deptModalTitle').textContent = 'Add Department';
+            renderAll();
+            if (document.getElementById('departmentsPage').classList.contains('active')) renderDepartments();
+            populateWorkerDropdowns();
+            updateDepartmentSelects();
+        });
+
+        document.getElementById('branchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editBranchId').value);
+            const name = document.getElementById('branchName').value.trim();
+            const location = document.getElementById('branchLocation').value.trim();
+            const pastor = document.getElementById('branchPastor').value.trim();
+            if (!name) { showToast('Branch name is required', 'error'); return; }
+            const duplicate = branches.find(b => b.name.toLowerCase() === name.toLowerCase() && b.id !== id);
+            if (duplicate) { showToast('A branch with this name already exists', 'error'); return; }
+            if (id) { const index = branches.findIndex(b => b.id === id); if (index !== -1) { const oldName = branches[index].name; branches[index] = { id, name, location, pastor }; workers.forEach(w => { if (w.branch === oldName) w.branch = name; }); localStorage.setItem('churchWorkers', JSON.stringify(workers)); showToast('Branch updated successfully!'); } } else { branches.push({ id: getNextId(branches), name, location, pastor }); showToast('Branch added successfully!'); }
+            localStorage.setItem('churchBranches', JSON.stringify(branches));
+            closeModal('branchModal');
+            this.reset();
+            document.getElementById('editBranchId').value = '';
+            document.getElementById('branchModalTitle').textContent = 'Add Branch';
+            renderAll();
+            if (document.getElementById('branchesPage').classList.contains('active')) renderBranches();
+            populateWorkerDropdowns();
+            updateBranchSelects();
+        });
+
+        document.getElementById('titheForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const workerId = parseInt(document.getElementById('titheWorker').value);
+            const worker = workers.find(w => w.id === workerId);
+            if (!worker) { showToast('Please select a worker', 'error'); return; }
+            const amount = parseFloat(document.getElementById('titheAmount').value);
+            if (!amount || amount <= 0) { showToast('Enter valid amount', 'error'); return; }
+            const method = document.getElementById('titheMethod').value;
+            const type = document.getElementById('titheType').value;
+            const date = new Date().toISOString().split('T')[0];
+            const data = { id: getNextId(tithes), workerId: workerId, workerName: worker.name, amount, type, method, date };
+            tithes.push(data);
+            localStorage.setItem('churchTithes', JSON.stringify(tithes));
+            addTransaction('income', `${type} - ${worker.name}`, amount, method, date, type);
+            closeModal('titheModal');
+            this.reset();
+            showToast('Giving recorded successfully!');
+            renderAll();
+            if (document.getElementById('tithesPage').classList.contains('active')) { renderTithesTable(); renderTitheSummary(); }
+        });
+
+        document.getElementById('eventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = { id: getNextId(events), name: document.getElementById('eventName').value.trim(), venue: document.getElementById('eventVenue').value.trim(), date: document.getElementById('eventDate').value, time: document.getElementById('eventTime').value, description: document.getElementById('eventDesc').value.trim(), department: document.getElementById('eventDepartment').value || null };
+            if (!data.name || !data.date) { showToast('Name and date required', 'error'); return; }
+            events.push(data);
+            localStorage.setItem('churchEvents', JSON.stringify(events));
+            closeModal('eventModal');
+            this.reset();
+            showToast('Event created successfully!');
+            renderAll();
+            if (document.getElementById('eventsPage').classList.contains('active')) renderEventsByDepartment();
+        });
+
+        document.getElementById('expenseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const method = document.getElementById('expenseMethod').value;
+            const category = document.getElementById('expenseCategory').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const description = document.getElementById('expenseDesc').value.trim();
+            const date = document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0];
+            if (!amount || amount <= 0) { showToast('Enter valid amount', 'error'); return; }
+            const data = { id: getNextId(expenses), category, description, amount, method, date };
+            expenses.push(data);
+            localStorage.setItem('churchExpenses', JSON.stringify(expenses));
+            addTransaction('expense', category, amount, method, date, category);
+            closeModal('expenseModal');
+            this.reset();
+            showToast('Expense added successfully!');
+            renderAll();
+            if (document.getElementById('financialPage').classList.contains('active')) { renderExpensesTable(); renderFinancialSummary(); renderExpenseChart(); renderRecentTransactions(); }
+        });
+
+        document.getElementById('settingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            settings = { churchName: document.getElementById('churchName').value, pastorName: document.getElementById('pastorName').value, churchPhone: document.getElementById('churchPhone').value, churchEmail: document.getElementById('churchEmail').value, churchAddress: document.getElementById('churchAddress').value, };
+            const newPass = document.getElementById('newPassword').value;
+            if (newPass) settings.password = newPass;
+            localStorage.setItem('churchSettings', JSON.stringify(settings));
+            showToast('Settings saved successfully!');
+            document.getElementById('newPassword').value = '';
+        });
+
+        // ===== CHARTS =====
+        let givingChart, expenseChart, monthlyChart;
+        function renderCharts() {
+            const titheTotal = tithes.filter(t => t.type === 'Tithe').reduce((s, t) => s + t.amount, 0);
+            const offeringTotal = tithes.filter(t => t.type === 'Offering').reduce((s, t) => s + t.amount, 0);
+            const thanksgivingTotal = tithes.filter(t => t.type === 'Thanksgiving').reduce((s, t) => s + t.amount, 0);
+            const donationTotal = tithes.filter(t => t.type === 'Donation').reduce((s, t) => s + t.amount, 0);
+            const ctx1 = document.getElementById('givingPieChart').getContext('2d');
+            if (givingChart) givingChart.destroy();
+            givingChart = new Chart(ctx1, { type: 'pie', data: { labels: ['Tithes', 'Offerings', 'Thanksgiving', 'Donation'], datasets: [{ data: [titheTotal, offeringTotal, thanksgivingTotal, donationTotal], backgroundColor: ['#3b82f6', '#16a34a', '#f59e0b', '#ef4444'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            renderExpenseChart();
+            renderMonthlyChart();
+        }
+        function renderExpenseChart() {
+            const cats = {}; expenses.forEach(e => { cats[e.category] = (cats[e.category] || 0) + e.amount; });
+            const ctx = document.getElementById('expensePieChart');
+            if (ctx) { const cctx = ctx.getContext('2d'); if (expenseChart) expenseChart.destroy(); if (Object.keys(cats).length > 0) { const colors = ['#ef4444', '#f59e0b', '#16a34a', '#3b82f6', '#8b5cf6', '#06b6d4', '#f472b6', '#fb923c', '#94a3b8']; expenseChart = new Chart(cctx, { type: 'pie', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: colors.slice(0, Object.keys(cats).length), borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom' } } } }); } else { expenseChart = new Chart(cctx, { type: 'pie', data: { labels: ['No Expenses'], datasets: [{ data: [1], backgroundColor: ['#e2e8f0'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } }); } }
+            const list = document.getElementById('expenseCategoriesList'); if (list) { list.innerHTML = Object.entries(cats).map(([k, v]) => `<div style="display:flex; justify-content:space-between; padding:0.4rem 0; border-bottom:1px solid #f1f5f9;"><span>${k}</span><span style="font-weight:600; color:var(--green);">KES ${v.toFixed(2)}</span></div>`).join('') || '<p style="color:var(--text-muted);">No expenses recorded</p>'; }
+        }
+        function renderMonthlyChart() {
+            const months = {}; tithes.forEach(t => { const m = t.date.substring(0, 7); months[m] = (months[m] || 0) + t.amount; });
+            const ctx = document.getElementById('monthlyGivingChart');
+            if (ctx) { const cctx = ctx.getContext('2d'); if (monthlyChart) monthlyChart.destroy(); const labels = Object.keys(months).sort(); const data = labels.map(l => months[l]); monthlyChart = new Chart(cctx, { type: 'bar', data: { labels, datasets: [{ label: 'Giving (KES)', data, backgroundColor: '#16a34a', borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } }); }
+        }
+
+        // ===== GENERATE EXCEL REPORT (XLSX) =====
+        function generateReport(type) {
+            let filename = `${type}_report_${new Date().toISOString().split('T')[0]}.xlsx`;
+            let rows = [];
+
+            if (type === 'workers') {
+                rows.push(['ID', 'Name', 'Gender', 'Phone', 'Email', 'Occupation', 'Address', 'Marital Status', 'Baptism', 'Department', 'Branch', 'Join Date']);
+                workers.forEach(w => rows.push([w.id, w.name, w.gender || '', w.phone || '', w.email || '', w.occupation || '', w.address || '', w.marital || '', w.baptism || '', w.department || '', w.branch || '', w.joinDate || '']));
+            } else if (type === 'tithes') {
+                rows.push(['Worker', 'Amount (KES)', 'Type', 'Method', 'Date']);
+                tithes.forEach(t => rows.push([t.workerName, t.amount, t.type, t.method, t.date]));
+                rows.push(['', '', '', '', '']);
+                rows.push(['TOTAL GIVING', tithes.reduce((s, t) => s + t.amount, 0).toFixed(2), '', '', '']);
+            } else if (type === 'financial') {
+                const income = tithes.reduce((s, t) => s + t.amount, 0);
+                const exp = expenses.reduce((s, e) => s + e.amount, 0);
+                rows.push(['FINANCIAL REPORT', '', '']);
+                rows.push(['Total Income', 'KES', income.toFixed(2)]);
+                rows.push(['Total Expenses', 'KES', exp.toFixed(2)]);
+                rows.push(['Balance', 'KES', (income - exp).toFixed(2)]);
+                rows.push(['', '', '']);
+                rows.push(['EXPENSES BY CATEGORY', '', '']);
+                rows.push(['Category', 'Amount (KES)', '']);
+                const cats = expenses.reduce((acc, e) => { acc[e.category] = (acc[e.category] || 0) + e.amount; return acc; }, {});
+                Object.entries(cats).forEach(([k, v]) => rows.push([k, v.toFixed(2), '']));
+                rows.push(['', '', '']);
+                rows.push(['RECENT TRANSACTIONS', '', '']);
+                rows.push(['Type', 'Title', 'Amount (KES)', 'Method', 'Date']);
+                transactions.slice(0, 20).forEach(tx => rows.push([tx.type, tx.title, tx.amount.toFixed(2), tx.method, tx.date]));
+            } else if (type === 'events') {
+                rows.push(['Name', 'Venue', 'Date', 'Time', 'Department']);
+                events.forEach(e => rows.push([e.name, e.venue || '', e.date, e.time, e.department || 'General']));
+            }
+
+            // Build XLSX XML
+            let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+            xml += '<?mso-application progid="Excel.Sheet"?>\n';
+            xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\n';
+            xml += ' xmlns:o="urn:schemas-microsoft-com:office:office"\n';
+            xml += ' xmlns:x="urn:schemas-microsoft-com:office:excel"\n';
+            xml += ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
+            xml += '<Worksheet ss:Name="Report">\n<Table>\n';
+
+            rows.forEach(row => {
+                xml += '<Row>\n';
+                row.forEach(cell => {
+                    xml += `<Cell><Data ss:Type="String">${String(cell).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</Data></Cell>\n`;
+                });
+                xml += '</Row>\n';
+            });
+
+            xml += '</Table>\n</Worksheet>\n</Workbook>';
+
+            const blob = new Blob([xml], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast(`${type} report exported to Excel!`);
+        }
+
+        // ===== TOGGLE MENU =====
+        document.getElementById('menuToggle').addEventListener('click', function() { document.getElementById('sidebar').classList.toggle('open'); });
+
+        // ===== RENDER ALL =====
+        function renderAll() {
+            renderStats();
+            renderRecentActivity();
+            renderRecentWorkers();
+            populateWorkerDropdowns();
+            updateDepartmentSelects();
+            updateBranchSelects();
+            renderCharts();
+            updateReportSummary();
+            const deptSelect = document.getElementById('eventDepartment');
+            if (deptSelect) {
+                const current = deptSelect.value;
+                deptSelect.innerHTML = '<option value="">None</option>' + departments.map(d => `<option value="${d.name}">${d.name}</option>`).join('');
+                if (current) deptSelect.value = current;
+            }
+            if (document.getElementById('eventsPage').classList.contains('active')) renderEventsByDepartment();
+            if (document.getElementById('workersPage').classList.contains('active')) renderWorkerList();
+            if (document.getElementById('financialPage').classList.contains('active')) { renderRecentTransactions(); }
+        }
+
+        // ===== INIT =====
+        if (sessionStorage.getItem('loggedIn') === 'true') {
+            renderAll();
+        }
+        document.getElementById('wrkJoinDate').valueAsDate = new Date();
+        document.getElementById('eventDate').valueAsDate = new Date();
+        document.getElementById('expenseDate').valueAsDate = new Date();
+        console.log('T.R.C INT\'L Manager loaded with Excel Export on Reports');
+    </script>
 </body>
 </html>
