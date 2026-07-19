@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1193,7 +1191,7 @@
             appWrapper.classList.add('active');
         }
 
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
@@ -1203,6 +1201,7 @@
                 appWrapper.classList.add('active');
                 loginError.style.display = 'none';
                 showToast('Welcome back, Admin!');
+                await dataReadyPromise;
                 renderAll();
             } else {
                 loginError.style.display = 'block';
@@ -1221,35 +1220,130 @@
         document.getElementById('logoutBtn').addEventListener('click', handleLogout);
         document.getElementById('logoutBtn2').addEventListener('click', handleLogout);
 
-        // ===== DATA STORE =====
-        let workers = JSON.parse(localStorage.getItem('churchWorkers')) || [];
-        let departments = JSON.parse(localStorage.getItem('churchDepartments')) || [];
-        let branches = JSON.parse(localStorage.getItem('churchBranches')) || [];
-        let tithes = JSON.parse(localStorage.getItem('churchTithes')) || [];
-        let events = JSON.parse(localStorage.getItem('churchEvents')) || [];
-        let expenses = JSON.parse(localStorage.getItem('churchExpenses')) || [];
-        let settings = JSON.parse(localStorage.getItem('churchSettings')) || {};
-        let transactions = JSON.parse(localStorage.getItem('churchTransactions')) || [];
-        let memberComplaints = JSON.parse(localStorage.getItem('memberComplaints')) || {};
+        // ===== DATA STORE (synced with Firebase Firestore) =====
+        let workers = [], departments = [], branches = [], tithes = [], events = [], expenses = [], settings = {}, transactions = [], memberComplaints = {};
 
-        // Set default church settings if not exist
-        if (!settings.churchName) settings.churchName = 'TALENTS REVIVAL CHURCHES INT\'L';
-        if (!settings.churchPhone) settings.churchPhone = '+254 711717607';
-        if (!settings.churchEmail) settings.churchEmail = 'trc123@gmail.com';
-        if (!settings.churchAddress) settings.churchAddress = 'Thika Landless';
+        // Firestore handles, populated by initFirebase()
+        let dbSetDoc, dbGetDoc, dbOnSnapshot, dbDocRef;
 
-        if (branches.length === 0) { branches = []; localStorage.setItem('churchBranches', JSON.stringify(branches)); }
-        if (departments.length === 0) { departments = []; localStorage.setItem('churchDepartments', JSON.stringify(departments)); }
-        if (workers.length === 0) { workers = []; localStorage.setItem('churchWorkers', JSON.stringify(workers)); }
-        if (tithes.length === 0) { tithes = []; localStorage.setItem('churchTithes', JSON.stringify(tithes)); }
-        if (transactions.length === 0) {
-            tithes.forEach(t => { transactions.push({ id: t.id, type: 'income', title: `${t.type} - ${t.workerName}`, amount: t.amount, method: t.method, date: t.date, category: t.type }); });
-            expenses.forEach(e => { transactions.push({ id: 'exp_' + e.id, type: 'expense', title: e.category, amount: e.amount, method: e.method || 'Cash', date: e.date, category: e.category }); });
-            transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-            localStorage.setItem('churchTransactions', JSON.stringify(transactions));
+        async function initFirebase() {
+            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js");
+            const { getFirestore, doc, getDoc, setDoc, onSnapshot } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
+            const firebaseConfig = {
+                apiKey: "AIzaSyAOoOrGxQIXzqY0D-BPcpz_Ijee-5Sjkzw",
+                authDomain: "trc-56d72.firebaseapp.com",
+                databaseURL: "https://trc-56d72-default-rtdb.firebaseio.com",
+                projectId: "trc-56d72",
+                storageBucket: "trc-56d72.firebasestorage.app",
+                messagingSenderId: "1071221352349",
+                appId: "1:1071221352349:web:181d6adac675db41a47174"
+            };
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            dbDocRef = doc(db, "churchData", "main");
+            dbSetDoc = setDoc;
+            dbGetDoc = getDoc;
+            dbOnSnapshot = onSnapshot;
         }
-        if (events.length === 0) { events = []; localStorage.setItem('churchEvents', JSON.stringify(events)); }
-        if (expenses.length === 0) { expenses = []; localStorage.setItem('churchExpenses', JSON.stringify(expenses)); }
+
+        // Pushes the full current state to Firestore. Called after every add/edit/delete.
+        async function saveData() {
+            if (!dbSetDoc || !dbDocRef) return;
+            try {
+                await dbSetDoc(dbDocRef, {
+                    workers, departments, branches, tithes, events, expenses,
+                    settings, transactions, memberComplaints
+                }, { merge: true });
+            } catch (err) {
+                console.error('Cloud save failed:', err);
+                showToast('Could not sync to cloud \u2014 check your connection', 'error');
+            }
+        }
+
+        function applySettingsDefaults() {
+            if (!settings.churchName) settings.churchName = 'TALENTS REVIVAL CHURCHES INT\'L';
+            if (!settings.churchPhone) settings.churchPhone = '+254 711717607';
+            if (!settings.churchEmail) settings.churchEmail = 'trc123@gmail.com';
+            if (!settings.churchAddress) settings.churchAddress = 'Thika Landless';
+        }
+
+        // Loads data from Firestore. On the very first run (no cloud doc yet), migrates
+        // whatever was previously saved in this browser's localStorage up to the cloud.
+        async function loadData() {
+            await initFirebase();
+            try {
+                const snap = await dbGetDoc(dbDocRef);
+                if (snap.exists()) {
+                    const d = snap.data();
+                    workers = d.workers || [];
+                    departments = d.departments || [];
+                    branches = d.branches || [];
+                    tithes = d.tithes || [];
+                    events = d.events || [];
+                    expenses = d.expenses || [];
+                    settings = d.settings || {};
+                    transactions = d.transactions || [];
+                    memberComplaints = d.memberComplaints || {};
+                    applySettingsDefaults();
+                } else {
+                    // First time this app has connected to the cloud: bring across any
+                    // data that was previously stored locally in this browser, then push it up.
+                    workers = JSON.parse(localStorage.getItem('churchWorkers')) || [];
+                    departments = JSON.parse(localStorage.getItem('churchDepartments')) || [];
+                    branches = JSON.parse(localStorage.getItem('churchBranches')) || [];
+                    tithes = JSON.parse(localStorage.getItem('churchTithes')) || [];
+                    events = JSON.parse(localStorage.getItem('churchEvents')) || [];
+                    expenses = JSON.parse(localStorage.getItem('churchExpenses')) || [];
+                    settings = JSON.parse(localStorage.getItem('churchSettings')) || {};
+                    transactions = JSON.parse(localStorage.getItem('churchTransactions')) || [];
+                    memberComplaints = JSON.parse(localStorage.getItem('memberComplaints')) || {};
+                    applySettingsDefaults();
+                    if (transactions.length === 0 && (tithes.length || expenses.length)) {
+                        tithes.forEach(t => { transactions.push({ id: t.id, type: 'income', title: `${t.type} - ${t.workerName}`, amount: t.amount, method: t.method, date: t.date, category: t.type }); });
+                        expenses.forEach(e => { transactions.push({ id: 'exp_' + e.id, type: 'expense', title: e.category, amount: e.amount, method: e.method || 'Cash', date: e.date, category: e.category }); });
+                        transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    }
+                    await saveData();
+                }
+            } catch (err) {
+                console.error('Firestore load failed, falling back to local data:', err);
+                showToast('Could not reach the cloud \u2014 showing locally saved data', 'error');
+                workers = JSON.parse(localStorage.getItem('churchWorkers')) || [];
+                departments = JSON.parse(localStorage.getItem('churchDepartments')) || [];
+                branches = JSON.parse(localStorage.getItem('churchBranches')) || [];
+                tithes = JSON.parse(localStorage.getItem('churchTithes')) || [];
+                events = JSON.parse(localStorage.getItem('churchEvents')) || [];
+                expenses = JSON.parse(localStorage.getItem('churchExpenses')) || [];
+                settings = JSON.parse(localStorage.getItem('churchSettings')) || {};
+                transactions = JSON.parse(localStorage.getItem('churchTransactions')) || [];
+                memberComplaints = JSON.parse(localStorage.getItem('memberComplaints')) || {};
+                applySettingsDefaults();
+            }
+        }
+
+        // Live sync: picks up changes made from other devices/tabs in real time.
+        function subscribeToUpdates() {
+            dbOnSnapshot(dbDocRef, (snap) => {
+                if (!snap.exists() || snap.metadata.hasPendingWrites) return; // ignore echo of our own writes
+                const d = snap.data();
+                workers = d.workers || [];
+                departments = d.departments || [];
+                branches = d.branches || [];
+                tithes = d.tithes || [];
+                events = d.events || [];
+                expenses = d.expenses || [];
+                settings = d.settings || {};
+                transactions = d.transactions || [];
+                memberComplaints = d.memberComplaints || {};
+                if (sessionStorage.getItem('loggedIn') === 'true') renderAll();
+            });
+        }
+
+        // Resolves once initial cloud data has loaded; awaited before any render.
+        let dataReadyPromise = (async function startCloudSync() {
+            await loadData();
+            subscribeToUpdates();
+        })();
 
         let showCardsView = false;
 
@@ -1635,7 +1729,7 @@
             document.getElementById('workerModalTitle').textContent = 'Edit Church Worker';
             openModal('workerModal');
         }
-        function deleteWorker(id) { if (!confirm('Delete this worker permanently?')) return; workers = workers.filter(w => w.id !== id); localStorage.setItem('churchWorkers', JSON.stringify(workers)); renderAll(); if (document.getElementById('workersPage').classList.contains('active')) { if (showCardsView) renderChurchCards(); else renderWorkerList(); } showToast('Worker deleted'); }
+        function deleteWorker(id) { if (!confirm('Delete this worker permanently?')) return; workers = workers.filter(w => w.id !== id); saveData(); renderAll(); if (document.getElementById('workersPage').classList.contains('active')) { if (showCardsView) renderChurchCards(); else renderWorkerList(); } showToast('Worker deleted'); }
 
         // ===== TITHES =====
         function renderTitheSummary() {
@@ -1679,7 +1773,7 @@
             origClose.onclick = function() { closeModal('viewWorkerModal'); document.querySelector('#viewWorkerModal h2').innerHTML = `<i class="fas fa-id-card" style="color:#3b82f6;"></i> Worker Profile <button class="close-modal" onclick="closeModal('viewWorkerModal')">&times;</button>`; document.getElementById('viewWorkerEditBtn').style.display = 'inline-block'; };
         }
         function editDepartment(id) { const d = departments.find(dept => dept.id === id); if (!d) return; document.getElementById('editDeptId').value = id; document.getElementById('deptName').value = d.name; document.getElementById('deptDescription').value = d.description || ''; document.getElementById('deptModalTitle').textContent = 'Edit Department'; openModal('departmentModal'); }
-        function deleteDepartment(id) { const d = departments.find(dept => dept.id === id); if (!d) return; if (!confirm(`Delete department "${d.name}" permanently?`)) return; workers.forEach(w => { if (w.department === d.name) w.department = 'None'; }); localStorage.setItem('churchWorkers', JSON.stringify(workers)); departments = departments.filter(dept => dept.id !== id); localStorage.setItem('churchDepartments', JSON.stringify(departments)); renderAll(); if (document.getElementById('departmentsPage').classList.contains('active')) renderDepartments(); populateWorkerDropdowns(); updateDepartmentSelects(); showToast('Department deleted'); }
+        function deleteDepartment(id) { const d = departments.find(dept => dept.id === id); if (!d) return; if (!confirm(`Delete department "${d.name}" permanently?`)) return; workers.forEach(w => { if (w.department === d.name) w.department = 'None'; }); departments = departments.filter(dept => dept.id !== id); saveData(); renderAll(); if (document.getElementById('departmentsPage').classList.contains('active')) renderDepartments(); populateWorkerDropdowns(); updateDepartmentSelects(); showToast('Department deleted'); }
 
         // ===== BRANCHES =====
         function renderBranches() {
@@ -1701,7 +1795,7 @@
             origClose.onclick = function() { closeModal('viewWorkerModal'); document.querySelector('#viewWorkerModal h2').innerHTML = `<i class="fas fa-id-card" style="color:#3b82f6;"></i> Worker Profile <button class="close-modal" onclick="closeModal('viewWorkerModal')">&times;</button>`; document.getElementById('viewWorkerEditBtn').style.display = 'inline-block'; };
         }
         function editBranch(id) { const b = branches.find(branch => branch.id === id); if (!b) return; document.getElementById('editBranchId').value = id; document.getElementById('branchName').value = b.name; document.getElementById('branchLocation').value = b.location || ''; document.getElementById('branchPastor').value = b.pastor || ''; document.getElementById('branchModalTitle').textContent = 'Edit Branch'; openModal('branchModal'); }
-        function deleteBranch(id) { const b = branches.find(branch => branch.id === id); if (!b) return; if (!confirm(`Delete branch "${b.name}" permanently?`)) return; workers.forEach(w => { if (w.branch === b.name) w.branch = 'None'; }); localStorage.setItem('churchWorkers', JSON.stringify(workers)); branches = branches.filter(branch => branch.id !== id); localStorage.setItem('churchBranches', JSON.stringify(branches)); renderAll(); if (document.getElementById('branchesPage').classList.contains('active')) renderBranches(); populateWorkerDropdowns(); updateBranchSelects(); showToast('Branch deleted'); }
+        function deleteBranch(id) { const b = branches.find(branch => branch.id === id); if (!b) return; if (!confirm(`Delete branch "${b.name}" permanently?`)) return; workers.forEach(w => { if (w.branch === b.name) w.branch = 'None'; }); branches = branches.filter(branch => branch.id !== id); saveData(); renderAll(); if (document.getElementById('branchesPage').classList.contains('active')) renderBranches(); populateWorkerDropdowns(); updateBranchSelects(); showToast('Branch deleted'); }
         function updateBranchSelects() { ['wrkBranch'].forEach(id => { const sel = document.getElementById(id); if (!sel) return; const current = sel.value; sel.innerHTML = branches.map(b => `<option value="${b.name}">${b.name}</option>`).join('') + '<option value="None">None</option>'; if (current) sel.value = current; }); }
         function updateDepartmentSelects() { ['wrkDepartment'].forEach(id => { const sel = document.getElementById(id); if (!sel) return; const current = sel.value; sel.innerHTML = departments.map(d => `<option value="${d.name}">${d.name}</option>`).join('') + '<option value="None">None</option>'; if (current) sel.value = current; }); }
 
@@ -1736,7 +1830,7 @@
         function addTransaction(type, title, amount, method, date, category = '') {
             transactions.unshift({ id: Date.now(), type, title, amount, method, date: date || new Date().toISOString().split('T')[0], category });
             if (transactions.length > 100) transactions = transactions.slice(0, 100);
-            localStorage.setItem('churchTransactions', JSON.stringify(transactions));
+            saveData();
             if (document.getElementById('financialPage').classList.contains('active')) renderRecentTransactions();
         }
         function renderRecentTransactions() {
@@ -1745,7 +1839,7 @@
             if (txs.length === 0) { container.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-muted);">No transactions recorded yet.</div>`; return; }
             container.innerHTML = txs.map(tx => { const methodClass = tx.method === 'MPESA' ? 'mpesa' : tx.method === 'Airtel Money' ? 'airtel' : tx.method === 'Bank Transfer' ? 'bank' : tx.method === 'Card' ? 'card' : 'cash'; const isIncome = tx.type === 'income'; return `<div class="transaction-item"><div class="tx-info"><span class="tx-title">${tx.title}</span><span class="tx-detail">${tx.date} &bull; <span class="payment-method ${methodClass}">${tx.method}</span>${tx.category ? ` &bull; ${tx.category}` : ''}</span></div><div class="tx-amount ${isIncome ? 'income' : 'expense'}">${isIncome ? '+' : '-'} KES ${tx.amount.toFixed(2)}</div></div>`; }).join('');
         }
-        function resetTransactions() { if (!confirm('This will clear all transaction history. Are you sure?')) return; transactions = []; localStorage.setItem('churchTransactions', JSON.stringify(transactions)); renderRecentTransactions(); showToast('Transactions reset successfully'); }
+        function resetTransactions() { if (!confirm('This will clear all transaction history. Are you sure?')) return; transactions = []; saveData(); renderRecentTransactions(); showToast('Transactions reset successfully'); }
 
         // ===== EVENTS BY DEPARTMENT =====
         function renderEventsByDepartment() {
@@ -1851,23 +1945,8 @@
             if (!confirm('Final confirmation: This action cannot be undone. Click OK to erase all data.')) return;
             workers = []; departments = []; branches = []; tithes = []; events = []; expenses = []; transactions = []; settings = {};
             memberComplaints = {};
-            localStorage.removeItem('churchWorkers');
-            localStorage.removeItem('churchDepartments');
-            localStorage.removeItem('churchBranches');
-            localStorage.removeItem('churchTithes');
-            localStorage.removeItem('churchEvents');
-            localStorage.removeItem('churchExpenses');
-            localStorage.removeItem('churchTransactions');
-            localStorage.removeItem('churchSettings');
-            localStorage.removeItem('memberComplaints');
             localStorage.removeItem('churchComplaints');
-            localStorage.setItem('churchWorkers', JSON.stringify(workers));
-            localStorage.setItem('churchDepartments', JSON.stringify(departments));
-            localStorage.setItem('churchBranches', JSON.stringify(branches));
-            localStorage.setItem('churchTithes', JSON.stringify(tithes));
-            localStorage.setItem('churchEvents', JSON.stringify(events));
-            localStorage.setItem('churchExpenses', JSON.stringify(expenses));
-            localStorage.setItem('churchTransactions', JSON.stringify(transactions));
+            saveData();
             showToast('All data has been reset successfully!', 'success');
             renderAll();
             document.querySelector('.sidebar-nav a[data-page="dashboard"]').click();
@@ -1905,7 +1984,7 @@
                 workers.push(data); 
                 showToast('Worker added successfully!'); 
             }
-            localStorage.setItem('churchWorkers', JSON.stringify(workers));
+            saveData();
             closeModal('workerModal');
             this.reset();
             clearAvatarPreview();
@@ -1926,8 +2005,8 @@
             if (!name) { showToast('Department name is required', 'error'); return; }
             const duplicate = departments.find(d => d.name.toLowerCase() === name.toLowerCase() && d.id !== id);
             if (duplicate) { showToast('A department with this name already exists', 'error'); return; }
-            if (id) { const index = departments.findIndex(d => d.id === id); if (index !== -1) { const oldName = departments[index].name; departments[index] = { id, name, description }; workers.forEach(w => { if (w.department === oldName) w.department = name; }); localStorage.setItem('churchWorkers', JSON.stringify(workers)); showToast('Department updated successfully!'); } } else { departments.push({ id: getNextId(departments), name, description }); showToast('Department added successfully!'); }
-            localStorage.setItem('churchDepartments', JSON.stringify(departments));
+            if (id) { const index = departments.findIndex(d => d.id === id); if (index !== -1) { const oldName = departments[index].name; departments[index] = { id, name, description }; workers.forEach(w => { if (w.department === oldName) w.department = name; }); showToast('Department updated successfully!'); } } else { departments.push({ id: getNextId(departments), name, description }); showToast('Department added successfully!'); }
+            saveData();
             closeModal('departmentModal');
             this.reset();
             document.getElementById('editDeptId').value = '';
@@ -1947,8 +2026,8 @@
             if (!name) { showToast('Branch name is required', 'error'); return; }
             const duplicate = branches.find(b => b.name.toLowerCase() === name.toLowerCase() && b.id !== id);
             if (duplicate) { showToast('A branch with this name already exists', 'error'); return; }
-            if (id) { const index = branches.findIndex(b => b.id === id); if (index !== -1) { const oldName = branches[index].name; branches[index] = { id, name, location, pastor }; workers.forEach(w => { if (w.branch === oldName) w.branch = name; }); localStorage.setItem('churchWorkers', JSON.stringify(workers)); showToast('Branch updated successfully!'); } } else { branches.push({ id: getNextId(branches), name, location, pastor }); showToast('Branch added successfully!'); }
-            localStorage.setItem('churchBranches', JSON.stringify(branches));
+            if (id) { const index = branches.findIndex(b => b.id === id); if (index !== -1) { const oldName = branches[index].name; branches[index] = { id, name, location, pastor }; workers.forEach(w => { if (w.branch === oldName) w.branch = name; }); showToast('Branch updated successfully!'); } } else { branches.push({ id: getNextId(branches), name, location, pastor }); showToast('Branch added successfully!'); }
+            saveData();
             closeModal('branchModal');
             this.reset();
             document.getElementById('editBranchId').value = '';
@@ -1971,7 +2050,6 @@
             const date = new Date().toISOString().split('T')[0];
             const data = { id: getNextId(tithes), workerId: workerId, workerName: worker.name, amount, type, method, date };
             tithes.push(data);
-            localStorage.setItem('churchTithes', JSON.stringify(tithes));
             addTransaction('income', `${type} - ${worker.name}`, amount, method, date, type);
             closeModal('titheModal');
             this.reset();
@@ -1985,7 +2063,7 @@
             const data = { id: getNextId(events), name: document.getElementById('eventName').value.trim(), venue: document.getElementById('eventVenue').value.trim(), date: document.getElementById('eventDate').value, time: document.getElementById('eventTime').value, description: document.getElementById('eventDesc').value.trim(), department: document.getElementById('eventDepartment').value || null };
             if (!data.name || !data.date) { showToast('Name and date required', 'error'); return; }
             events.push(data);
-            localStorage.setItem('churchEvents', JSON.stringify(events));
+            saveData();
             closeModal('eventModal');
             this.reset();
             showToast('Event created successfully!');
@@ -2003,7 +2081,6 @@
             if (!amount || amount <= 0) { showToast('Enter valid amount', 'error'); return; }
             const data = { id: getNextId(expenses), category, description, amount, method, date };
             expenses.push(data);
-            localStorage.setItem('churchExpenses', JSON.stringify(expenses));
             addTransaction('expense', category, amount, method, date, category);
             closeModal('expenseModal');
             this.reset();
@@ -2017,7 +2094,7 @@
             settings = { churchName: document.getElementById('churchName').value, pastorName: document.getElementById('pastorName').value, churchPhone: document.getElementById('churchPhone').value, churchEmail: document.getElementById('churchEmail').value, churchAddress: document.getElementById('churchAddress').value, };
             const newPass = document.getElementById('newPassword').value;
             if (newPass) settings.password = newPass;
-            localStorage.setItem('churchSettings', JSON.stringify(settings));
+            saveData();
             showToast('Settings saved successfully!');
             document.getElementById('newPassword').value = '';
         });
@@ -2143,28 +2220,15 @@
         }
 
         // ===== INIT =====
-        if (sessionStorage.getItem('loggedIn') === 'true') {
-            renderAll();
-        }
+        dataReadyPromise.then(() => {
+            if (sessionStorage.getItem('loggedIn') === 'true') {
+                renderAll();
+            }
+        });
         document.getElementById('wrkJoinDate').valueAsDate = new Date();
         document.getElementById('eventDate').valueAsDate = new Date();
         document.getElementById('expenseDate').valueAsDate = new Date();
-        console.log('T.R.C INT\'L Manager loaded with 3x2 inch cards and PNG download');
+        console.log('T.R.C INT\'L Manager loaded with 3x2 inch cards and PNG download - now synced with Firebase');
     </script>
-    <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAOoOrGxQIXzqY0D-BPcpz_Ijee-5Sjkzw",
-    authDomain: "trc-56d72.firebaseapp.com",
-    databaseURL: "https://trc-56d72-default-rtdb.firebaseio.com",
-    projectId: "trc-56d72",
-    storageBucket: "trc-56d72.firebasestorage.app",
-    messagingSenderId: "1071221352349",
-    appId: "1:1071221352349:web:181d6adac675db41a47174"
-  };
-
-  const app = initializeApp(firebaseConfig);
-</script>
 </body>
 </html>
